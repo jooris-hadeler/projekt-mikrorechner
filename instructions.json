@@ -1,0 +1,278 @@
+[
+  {
+    "opcode": 0,
+    "format": "?",
+    "mnemonic": "nop",
+    "meaning": ""
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "add $d, $s, $t",
+    "meaning": "$d = $s + $t"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "addu $d, $s, $t",
+    "meaning": "$d = $s + $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "addi $d, $s, i",
+    "meaning": "$d = $s + SE(i)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "addiu $d, $s, i",
+    "meaning": "$d = $s + SE(i)"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "and $d, $s, $t",
+    "meaning": "$d = $s & $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "andi $d, $s, i",
+    "meaning": "$d = $s & ZE(i)"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "or $d, $s, $t",
+    "meaning": "$d = $s | $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "ori $d, $s, i",
+    "meaning": "$d = $s | ZE(i)"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "shl $d, $s, $t",
+    "meaning": "$d = $s << $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "shli $d, $s, i",
+    "meaning": "$d = $s << i"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "sal $d, $s, $t",
+    "meaning": "$d = $s <<< $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sali $d, $s, i",
+    "meaning": "$d = $s <<< i"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "shr $d, $s, $t",
+    "meaning": "$d = $s >> $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "shri $d, $s, i",
+    "meaning": "$d = $s >> i"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "sar $d, $s, $t",
+    "meaning": "$d = $s >>> $t"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sari $d, $s, i",
+    "meaning": "$d = $s >>> i"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "not $d, $s",
+    "meaning": "$d = ~$s"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "lhi $d, i",
+    "meaning": "HH($d) = i"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "llo $d, i",
+    "meaning": "LH($d) = i"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "slt $d, $s, $t",
+    "meaning": "$d = ($s < $t)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "slti $d, $s, i",
+    "meaning": "$d = ($s < SE(i))"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "sgt $d, $s, $t",
+    "meaning": "$d = ($s > $t)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sgti $d, $s, i",
+    "meaning": "$d = ($s > SE(i))"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "ult $d, $s, $t",
+    "meaning": "$d = ($s < $t)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "ulti $d, $s, i",
+    "meaning": "$d = ($s < ZE(i))"
+  },
+  {
+    "opcode": 0,
+    "format": "R",
+    "mnemonic": "ugt $d, $s, $t",
+    "meaning": "$d = ($s > $t)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "ugti $d, $s, i",
+    "meaning": "$d = ($s > ZE(i))"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lb $d, i($s)",
+    "meaning": "$d = SE(MEM[$s + i]:1)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lbu $d, i($s)",
+    "meaning": "$d = ZE(MEM[$s + i]:1)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lh $d, i($s)",
+    "meaning": "$d = SE(MEM[$s + i]:2)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lhu $d, i($s)",
+    "meaning": "$d = ZE(MEM[$s + i]:2)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lw $d, i($s)",
+    "meaning": "$d = SE(MEM[$s + i]:4)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "lwu $d, i($s)",
+    "meaning": "$d = ZE(MEM[$s + i]:4)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sb i($d), $s",
+    "meaning": "MEM[$d + i]:1 = LB($s)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sh i($d), $s",
+    "meaning": "MEM[$d + i]:2 = LH($s)"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "sw i($d), $s",
+    "meaning": "MEM[$d + i]:4 = $s"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "br $d, addr",
+    "meaning": "if ($d) pc += addr << 2"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "jr $d",
+    "meaning": "pc = $d"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "jmp addr",
+    "meaning": "pc += addr << 2"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "push $d",
+    "meaning": "MEM[sp] = $d; sp = sp - 4"
+  },
+  {
+    "opcode": 0,
+    "format": "I",
+    "mnemonic": "pop $d",
+    "meaning": "$d = MEM[sp]; sp = sp + 4"
+  },
+  {
+    "opcode": 0,
+    "format": "J",
+    "mnemonic": "call off($r)",
+    "meaning": "MEM[sp] = pc + 4; sp = sp - 4; pc = $r + off"
+  },
+  {
+    "opcode": 0,
+    "format": "?",
+    "mnemonic": "ret",
+    "meaning": "pc = MEM[sp]; sp = sp + 4"
+  },
+  {
+    "opcode": 0,
+    "format": "?",
+    "mnemonic": "trap",
+    "meaning": ""
+  },
+  {
+    "opcode": 0,
+    "format": "?",
+    "mnemonic": "halt",
+    "meaning": ""
+  }
+]
