@@ -8,9 +8,9 @@ import emulator.op.Register;
 
 public class Emulator {
     private ArrayList<Instruction> instructions;
-    private int[] memory;
     private int instructionPointer;
     private int[] registerValues;
+    private int[] memory;
 
     public Emulator(ArrayList<Instruction> program, int entryPoint, int memorySize) {
         this.instructions = program;
@@ -19,19 +19,21 @@ public class Emulator {
         this.registerValues = new int[32];
     }
 
-    private int getRegister(Register reg) {
-        if (reg == Register.R0) return 0;
+    public int getRegister(Register reg) {
+        if (reg == Register.R0)
+            return 0;
 
         return this.registerValues[reg.getIndex()];
     }
 
     private void setRegister(Register reg, int value) {
-        if (reg == Register.R0) return;
+        if (reg == Register.R0)
+            return;
 
         this.registerValues[reg.getIndex()] = value;
     }
 
-    public void tick() {
+    public boolean tick() {
         if (instructionPointer > instructions.size()) {
             System.err.println("IP out of bounds, exiting!");
             System.exit(1);
@@ -62,12 +64,32 @@ public class Emulator {
                 };
 
                 setRegister(current.getDest(), result);
-            } break;
+            }
+                break;
+
+            case OpCode.LoadImmediate: {
+                int value = getRegister(current.getOp1());
+                value |= current.getImmediate();
+
+                setRegister(current.getDest(), value);
+            }
+                break;
+
+            case OpCode.Halt:
+                return false;
 
             default:
                 System.err.println(
                         String.format("Unimplemented Instruction: %s, exiting!", current.getOpCode().toString()));
                 System.exit(1);
         }
+
+        instructionPointer++;
+
+        return true;
+    }
+
+    public void run() {
+        while (this.tick()) {};
     }
 }

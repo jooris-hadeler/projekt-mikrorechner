@@ -9,16 +9,20 @@ public class Instruction {
     private final int shiftAmount;
     private final int function;
 
-    public Instruction(OpCode opCode, Register dest, Register op1, Register op2, int shiftAmount, int function) {
-        this(opCode, dest, op1, op2, 0, shiftAmount, function);
+    public static Instruction R(OpCode opCode, Register dest, Register op1, Register op2, int shiftAmount, int function) {
+        return new Instruction(opCode, dest, op1, op2, 0, shiftAmount, function);
     }
 
-    public Instruction(OpCode opCode, Register dest, Register op, int immediate) {
-        this(opCode, dest, op, Register.R0, immediate, 0, 0);
+    public static Instruction I(OpCode opCode, Register dest, Register op, int immediate) {
+        return new Instruction(opCode, dest, op, Register.R0, immediate, 0, 0);
     }
 
-    public Instruction(OpCode opCode, int address) {
-        this(opCode, Register.R0, Register.R0, Register.R0, address, 0, 0);
+    public static Instruction J(OpCode opCode, int address) {
+        return new Instruction(opCode, Register.R0, Register.R0, Register.R0, address, 0, 0);
+    }
+
+    public static Instruction Halt() {
+        return Instruction.J(OpCode.Halt, 0);
     }
 
     private Instruction(OpCode opCode, Register dest, Register op1, Register op2, int immediate, int shiftAmount,
