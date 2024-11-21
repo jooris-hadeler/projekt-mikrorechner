@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+
 }
 
 group 'org.example'
@@ -12,8 +14,13 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'commons-cli:commons-cli:1.9.0'
 }
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass = 'emulator.Main'
 }
