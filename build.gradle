@@ -20,6 +20,16 @@ test {
     useJUnitPlatform()
 }
 
+jar {
+    manifest {
+        attributes('Main-Class': "emulator.Main")
+    }
+}
+
 application {
     mainClass = "emulator.Main"
+}
+
+run {
+    args = ["-fbuild/resources/main/emulator/test.source", "-s", "-m test.mem.txt", "-r test.regs.txt"]
 }
