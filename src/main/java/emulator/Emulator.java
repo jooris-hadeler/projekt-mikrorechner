@@ -20,15 +20,17 @@ public class Emulator {
     }
 
     public int getRegister(Register reg) {
-        if (reg == Register.R0)
+        if (reg == Register.R0) {
             return 0;
+        }
 
         return this.registerValues[reg.getIndex()];
     }
 
     private void setRegister(Register reg, int value) {
-        if (reg == Register.R0)
+        if (reg == Register.R0) {
             return;
+        }
 
         this.registerValues[reg.getIndex()] = value;
     }
@@ -42,7 +44,7 @@ public class Emulator {
         Instruction current = instructions.get(instructionPointer);
 
         switch (current.getOpCode()) {
-            case OpCode.Arithmetic: {
+            case Arithmetic: {
                 int op1 = getRegister(current.getOp1());
                 int op2 = getRegister(current.getOp2());
 
@@ -65,17 +67,17 @@ public class Emulator {
 
                 setRegister(current.getDest(), result);
             }
-                break;
+            break;
 
-            case OpCode.LoadImmediate: {
+            case LoadImmediate: {
                 int value = getRegister(current.getOp1());
                 value |= current.getImmediate();
 
                 setRegister(current.getDest(), value);
             }
-                break;
+            break;
 
-            case OpCode.Halt:
+            case Halt:
                 return false;
 
             default:
@@ -90,6 +92,16 @@ public class Emulator {
     }
 
     public void run() {
-        while (this.tick()) {};
+        while (this.tick()) {
+        }
+        ;
+    }
+
+    public int[] getRegisterValues() {
+        return registerValues;
+    }
+
+    public int[] getMemory() {
+        return memory;
     }
 }
