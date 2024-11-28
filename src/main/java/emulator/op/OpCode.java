@@ -1,11 +1,19 @@
 package emulator.op;
 
 public enum OpCode {
-    Arithmetic,
+    Arithmetic("R"),
 
-    LoadImmediate,
+    LoadImmediate("I"),
 
+    Halt("H");
 
-    Halt,
+    public String type;
 
+    OpCode(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
 }
