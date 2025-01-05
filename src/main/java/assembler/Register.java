@@ -1,4 +1,4 @@
-package emulator.op;
+package assembler;
 
 public enum Register {
     R0(0), R1(1), R2(2), R3(3), R4(4), R5(5), R6(6), R7(7), R8(8), R9(9), R10(10), R11(11), R12(12), R13(13), R14(14),
@@ -16,13 +16,24 @@ public enum Register {
     }
 
     public static Register getValue(String s) {
-        if (s.equals("RSP")) {
+        s = s.trim();
+        if(s.startsWith("%")){
+            s = s.substring(1);
+        }
+        if(Util.isInteger(s)){
+            int value = Integer.parseInt(s);
+            for(Register r : Register.values()){
+                if(r.index == value){
+                    return r;
+                }
+            }
+        }
+        if (s.equalsIgnoreCase("RSP")) {
             return RegisterStackPointer;
         }
-        if (s.equals("RBP")) {
+        if (s.equalsIgnoreCase("RBP")) {
             return RegisterBasePointer;
         }
-        Register result = valueOf(s);
-        return result;
+        return valueOf(s.toUpperCase());
     }
 }
