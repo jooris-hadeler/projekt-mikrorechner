@@ -124,7 +124,7 @@ Diese Tabelle beschreibt die Instruktionsformate unseres Prozessors, gegliedert 
 
 == Instruction Reference
 
-Diese Tabelle stellt die Instruktionen unseres Prozessors dar und bietet eine Übersicht über ihre wesentlichen Merkmale. Jede Zeile enthält den Op Code, der den Maschinenbefehl identifiziert, das Format, das die Struktur der Instruktion beschreibt, sowie den Mnemonic, eine lesbare Kurzform für den Befehl. Schließlich wird unter Action die Funktion der jeweiligen Instruktion beschrieben, also die Operation, die der Prozessor ausführt. Diese Darstellung erleichtert die Entwicklung und das Debugging von Programmen für unseren Prozessor.
+Diese Tabelle stellt die Instruktionen unseres Prozessors dar und bietet eine Übersicht über ihre wesentlichen Merkmale. Jede Zeile enthält den Op Code, der den Maschinenbefehl identifiziert, das Format, das die Struktur der Instruktion beschreibt, sowie den Mnemonic, eine lesbare Kurzform für den Befehl. Schließlich wird unter Action die Funktion der jeweiligen Instruktion beschrieben, also die Operation, die der Prozessor ausführt. Diese Darstellung erleichtert die Entwicklung und das Debugging von Programmen für unseren Prozessor. Für alle Instruktionen des Formats R ist der Opcode 0 und die Opcode spalte gibt statdessen die Function an.
 
 #let substitutions = (
   (">>>", sym.gt.triple),
@@ -147,19 +147,27 @@ Diese Tabelle stellt die Instruktionen unseres Prozessors dar und bietet eine Ü
   return result
 }
 
-#let instructions = json("instructions.json").map(entry => (
-  [#entry.opcode],
-  entry.format,
-  entry.mnemonic,
-  math.equation(substitute(entry.meaning)),
-))
+#let instructions = json("instructions.json").map(entry => {
+  let opcode = entry.opcode
+
+  if entry.format == "R" {
+    opcode = entry.funct
+  }
+
+  return (
+    [#opcode],
+    entry.format,
+    entry.mnemonic,
+    math.equation(substitute(entry.meaning)),
+  )
+})
 
 #table(
   columns: (auto, auto, auto, 1fr),
   align: (center, center, left, left),
   table.header(
     repeat: true,
-    [*Op Code*],
+    [*Opcode / Funct*],
     [*Format*],
     [*Mnemonic*],
     [*Action*],

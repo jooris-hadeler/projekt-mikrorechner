@@ -70,18 +70,6 @@
         "meaning": "$d = ~$s"
     },
     {
-        "opcode": 1,
-        "format": "J",
-        "mnemonic": "lhi $d, i",
-        "meaning": "HH($d) = i"
-    },
-    {
-        "opcode": 2,
-        "format": "J",
-        "mnemonic": "llo $d, i",
-        "meaning": "LH($d) = i"
-    },
-    {
         "opcode": 0,
         "funct": 10,
         "format": "R",
@@ -122,6 +110,18 @@
         "format": "R",
         "mnemonic": "ne $d, $s, $t",
         "meaning": "$d = $s != $t"
+    },
+    {
+        "opcode": 1,
+        "format": "J",
+        "mnemonic": "lhi $d, i",
+        "meaning": "HH($d) = i"
+    },
+    {
+        "opcode": 2,
+        "format": "J",
+        "mnemonic": "llo $d, i",
+        "meaning": "LH($d) = i"
     },
     {
         "opcode": 3,
