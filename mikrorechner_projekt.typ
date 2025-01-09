@@ -174,3 +174,7 @@ Diese Tabelle stellt die Instruktionen unseres Prozessors dar und bietet eine Ü
   ),
   ..instructions.flatten(),
 )
+
+== Architektur
+
+#image("architecture.svg")
