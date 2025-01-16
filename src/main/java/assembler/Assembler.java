@@ -60,15 +60,19 @@ public class Assembler {
         }
 
         Instruction instruction = parseInstruction(line);
-        if (instruction.getType() != Instruction.Type.UNDEFINED) {
+        if (instruction.getType() == Instruction.Type.R
+                || instruction.getType() == Instruction.Type.I
+                || instruction.getType() == Instruction.Type.J) {
             out.add(simpleInstruction(line));
             index++;
-        } else {
+        } else if (instruction.getType() == Instruction.Type.MACRO) {
             int[] bits = specialInstruction(line);
             for (int i = 0; i < bits.length; i++) {
                 out.add(bits[i]);
                 index++;
             }
+        } else {
+            throw new RuntimeException("Unknown instruction: " + instruction);
         }
     }
 
@@ -148,7 +152,7 @@ public class Assembler {
         if (labels.containsKey(label)) {
             return true;
         }
-        labels.put(label, index);
+        labels.put(label, bytesPerInstruction * index);
         return false;
     }
 

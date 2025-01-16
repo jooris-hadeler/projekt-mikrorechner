@@ -79,7 +79,8 @@ public enum Instruction {
         J, // 1 Argument
         I, // 3 Arguments
         R, // 5 Arguments
-        UNDEFINED
+        UNDEFINED,
+        MACRO
     }
 
     public static String mostSimilarByString(String str) {
