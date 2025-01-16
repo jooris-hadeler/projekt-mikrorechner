@@ -13,7 +13,7 @@ entity mem_seg is
         write_data : in std_logic_vector(31 downto 0);
         clk, writeE, readE, mem_to_reg_in, reg_write_in, mem_to_reg_MEM, reg_write_MEM  : in std_logic;
         read_data, adress_out, pc_out: out signed(31 downto 0);
-        mem_to_reg_WB, reg_write_WB : out std_logic;
+        mem_to_reg_WB, reg_write_WB : out std_logic
     );
 end entity mem_seg;
 

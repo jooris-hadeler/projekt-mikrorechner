@@ -7,7 +7,7 @@ entity Prozessor is
     );
 end entity Prozessor;
 
-architecture behaviour of Prozessor
+architecture behaviour of Prozessor is
     component instF is -- IF schon belegt in vhdl
     port (
         pc_in : in signed(31 downto 0);

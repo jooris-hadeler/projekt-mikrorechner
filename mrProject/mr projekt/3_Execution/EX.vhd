@@ -40,6 +40,11 @@ architecture behaviour of ex_seg is
                 write_reg <= rd when write_sel = '1' else rt;
 
                 data <= reg_val;
+
+                wE_out <= wE;
+                rE_out <= rE;
+                mem_to_reg_MEM <= mem_to_reg_EX;
+                reg_write_MEM <= reg_write_EX;
             end if; --weitere speicherwerte einfach mit in process integrieren
         end process ex_seg_process;
 

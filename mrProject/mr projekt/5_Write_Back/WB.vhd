@@ -9,7 +9,7 @@ entity wb_seg is
         write_reg_in : in signed(4 downto 0);
         write_reg_out : out signed(4 downto 0);
         write_enable_out : out std_logic;
-        write_data : out signed(31 downto 0);
+        write_data : out signed(31 downto 0)
     );
 end entity wb_seg;
 
