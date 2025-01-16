@@ -1,41 +1,56 @@
-use cpu::Processor;
-use log::LevelFilter;
+use std::{fs, process::exit};
 
+use clap::Parser;
+use cli::Cli;
+use cpu::Processor;
+use log::{error, info, LevelFilter};
+
+pub mod cli;
 pub mod cpu;
-pub mod ops;
+pub mod isa;
 
 fn main() {
+    let Cli {
+        verbose,
+        ram_size,
+        file,
+        program_counter,
+    } = cli::Cli::parse();
+
     simple_logger::SimpleLogger::new()
         .with_colors(true)
-        .with_level(LevelFilter::Debug)
+        .with_level(if verbose {
+            LevelFilter::Debug
+        } else {
+            LevelFilter::Info
+        })
         .without_timestamps()
         .init()
         .unwrap();
 
     // python: convert = lambda x: [y for y in x.to_bytes(4, 'big')]
 
-    #[rustfmt::skip]
-    let rom = vec![
-        8, 1, 0, 255,  // llo $1,    255
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        36, 32, 0, 0,  // sb  0($0), $1 
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-        88, 0, 0, 0,   // nop
-    ];
+    let Ok(rom) = fs::read(&file) else {
+        error!("Failed to load ROM image.");
+        exit(-1);
+    };
 
-    let mut cpu = Processor::new(rom, 4096, 0);
+    info!("Set RAM size to {} bytes.", ram_size);
+    info!("Successfully loaded ROM image of size {} bytes.", rom.len());
 
-    for _ in 0..12 {
-        cpu.tick().unwrap();
+    let mut index = 0;
+    let mut emulator = Processor::new(rom, ram_size, program_counter);
+
+    while !emulator.should_halt {
+        if let Err(err) = emulator.tick() {
+            error!("{err}");
+            break;
+        };
+
+        index += 1;
     }
 
-    println!("MEM[0] = {}", cpu.ram[0]);
+    info!("Emulator ran for {} cycles, before halting.", index);
+
+    println!("MEM[0] = {}", emulator.ram[0]);
 }

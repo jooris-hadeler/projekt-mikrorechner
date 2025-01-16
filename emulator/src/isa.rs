@@ -14,12 +14,6 @@ pub enum IsaError {
     InvalidFunct(u32),
 }
 
-enum InstructionFormat {
-    R,
-    I,
-    J,
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Register {
     RZero,
@@ -226,16 +220,6 @@ pub enum OpCode {
     Nop,
 }
 
-impl OpCode {
-    fn instruction_format(&self) -> InstructionFormat {
-        match self {
-            OpCode::ArithmeticLogic => InstructionFormat::R,
-            OpCode::Jump | OpCode::Call => InstructionFormat::J,
-            _ => InstructionFormat::I,
-        }
-    }
-}
-
 impl Default for OpCode {
     fn default() -> Self {
         OpCode::Nop
@@ -290,8 +274,8 @@ impl TryFrom<u32> for Instruction {
     fn try_from(value: u32) -> Result<Self, Self::Error> {
         let op = OpCode::try_from(value >> 26)?;
 
-        match op.instruction_format() {
-            InstructionFormat::R => {
+        match op {
+            OpCode::ArithmeticLogic => {
                 let rs = Register::try_from((value >> 21) & 0x1F)?;
                 let rt = Register::try_from((value >> 16) & 0x1F)?;
                 let rd = Register::try_from((value >> 11) & 0x1F)?;
@@ -307,17 +291,17 @@ impl TryFrom<u32> for Instruction {
                     funct,
                 }))
             }
-            InstructionFormat::I => {
+            OpCode::Jump | OpCode::Call => {
+                let addr = value & 0x3FFFFFF;
+
+                Ok(Instruction::J(JInstruction { op, addr }))
+            }
+            _ => {
                 let rs = Register::try_from((value >> 21) & 0x1F)?;
                 let rt = Register::try_from((value >> 16) & 0x1F)?;
                 let imm = (value & 0xFFFF) as u16;
 
                 Ok(Instruction::I(IInstruction { op, rs, rt, imm }))
-            }
-            InstructionFormat::J => {
-                let addr = value & 0x3FFFFFF;
-
-                Ok(Instruction::J(JInstruction { op, addr }))
             }
         }
     }

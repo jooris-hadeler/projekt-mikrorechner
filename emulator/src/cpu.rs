@@ -1,28 +1,42 @@
-use std::u32;
+use std::{fmt::Debug, u32};
 
-use crate::ops::{Function, Instruction, IsaError, OpCode, Register};
+use crate::isa::{Function, Instruction, IsaError, OpCode, Register};
 use log::{debug, trace};
 use thiserror::Error;
 
 #[derive(Debug, Error, Clone, Copy, PartialEq, Eq)]
 pub enum ExecutionError {
-    #[error("address {address} is out of bounds, of memory with size {memory_size}")]
-    AddressOutOfBounds { address: u32, memory_size: u32 },
+    #[error("Attempted to read from / write to RAM, but address {0:x} is out of bounds.")]
+    RamOutOfBounds(u32),
 
-    #[error("attempted to write to $0 which is forbidden")]
+    #[error("Attempted ro read from ROM, but address {0:x} is out of bounds.")]
+    RomOutOfBounds(u32),
+
+    #[error("Attempted to write value to $0 which is forbidden.")]
     InvalidRegisterWrite,
 
-    #[error("invalid instruction: {0}")]
+    #[error("Invalid Instruction found in ROM image: {0}")]
     InvalidInstruction(#[from] IsaError),
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 struct IfId {
     instruction_word: u32,
     next_program_counter: u32,
 }
 
-#[derive(Debug, Clone, Copy)]
+impl Debug for IfId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self {
+            instruction_word,
+            next_program_counter,
+        } = self;
+
+        write!(f, "npc={next_program_counter}, iw={instruction_word}")
+    }
+}
+
+#[derive(Clone, Copy)]
 struct IdEx {
     next_program_counter: u32,
     op: OpCode,
@@ -33,7 +47,23 @@ struct IdEx {
     imm_addr: u32,
 }
 
-#[derive(Debug, Clone, Copy)]
+impl Debug for IdEx {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self {
+            next_program_counter,
+            op,
+            funct,
+            vs,
+            vt,
+            rd,
+            imm_addr,
+        } = self;
+
+        write!(f, "npc={next_program_counter}, op={op:?}, funct={funct:?}, vs={vs}, vt={vt}, rd={rd:?}, imm_addr={imm_addr}")
+    }
+}
+
+#[derive(Clone, Copy)]
 struct ExMem {
     next_program_counter: u32,
     op: OpCode,
@@ -43,10 +73,36 @@ struct ExMem {
     addr: u32,
 }
 
-#[derive(Debug, Clone, Copy)]
+impl Debug for ExMem {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self {
+            next_program_counter,
+            op,
+            vd,
+            vt,
+            rd,
+            addr,
+        } = self;
+
+        write!(
+            f,
+            "npc={next_program_counter}, op={op:?}, vd={vd}, vt={vt}, rd={rd:?}, addr={addr}"
+        )
+    }
+}
+
+#[derive(Clone, Copy)]
 struct MemWb {
     reg: Register,
     value: u32,
+}
+
+impl Debug for MemWb {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let Self { reg, value } = self;
+
+        write!(f, "reg={reg:?}, value={value}")
+    }
 }
 
 pub struct Processor {
@@ -54,6 +110,7 @@ pub struct Processor {
     pub ram: Vec<u8>,
     pub program_counter: u32,
     pub registers: [u32; 32],
+    pub should_halt: bool,
 
     stage_registers: (Option<IfId>, Option<IdEx>, Option<ExMem>, Option<MemWb>),
 }
@@ -66,6 +123,7 @@ impl Processor {
             program_counter,
             registers: [0; 32],
             stage_registers: Default::default(),
+            should_halt: false,
         }
     }
 
@@ -90,10 +148,7 @@ impl Processor {
         self.rom
             .get(address as usize)
             .copied()
-            .ok_or(ExecutionError::AddressOutOfBounds {
-                address,
-                memory_size: self.rom.len() as u32,
-            })
+            .ok_or(ExecutionError::RomOutOfBounds(address))
     }
 
     fn read_ram(&self, address: u32) -> Result<u8, ExecutionError> {
@@ -102,31 +157,31 @@ impl Processor {
         self.ram
             .get(address as usize)
             .copied()
-            .ok_or(ExecutionError::AddressOutOfBounds {
-                address,
-                memory_size: self.ram.len() as u32,
-            })
+            .ok_or(ExecutionError::RamOutOfBounds(address))
     }
 
     fn write_ram(&mut self, address: u32, value: u8) -> Result<(), ExecutionError> {
         trace!("write_ram(address = {address}, value = {value})");
 
-        let memory_size = self.ram.len() as u32;
-
-        *(self
+        let cell = self
             .ram
             .get_mut(address as usize)
-            .ok_or(ExecutionError::AddressOutOfBounds {
-                address,
-                memory_size,
-            })?) = value;
+            .ok_or(ExecutionError::RamOutOfBounds(address))?;
+
+        *cell = value;
 
         Ok(())
     }
 
     pub fn tick(&mut self) -> Result<(), ExecutionError> {
         debug!("BEGIN TICK");
+
         let (ifid, idex, exmem, memwb) = self.stage_registers;
+        debug!("fetch     <- {}", self.program_counter);
+        debug!("decode    <- {ifid:?}");
+        debug!("execute   <- {idex:?}");
+        debug!("memory    <- {exmem:?}");
+        debug!("writeback <- {memwb:?}");
 
         let new_ifid = self.fetch()?;
         let new_idex = self.decode(ifid)?;
@@ -134,14 +189,18 @@ impl Processor {
         let new_memwb = self.memory(exmem)?;
         self.write_back(memwb)?;
 
+        debug!("fetch     -> {new_ifid:?}");
+        debug!("decode    -> {new_idex:?}");
+        debug!("execute   -> {new_exmem:?}");
+        debug!("memory    -> {new_memwb:?}");
+        debug!("writeback -> None");
         self.stage_registers = (new_ifid, new_idex, new_exmem, new_memwb);
         debug!("END TICK");
+
         Ok(())
     }
 
     fn fetch(&mut self) -> Result<Option<IfId>, ExecutionError> {
-        debug!("FETCH <- {}", self.program_counter);
-
         let instruction_word = u32::from_be_bytes([
             self.read_rom(self.program_counter + 0)?,
             self.read_rom(self.program_counter + 1)?,
@@ -157,26 +216,21 @@ impl Processor {
             next_program_counter,
         });
 
-        debug!("FETCH -> {ifid:?}");
-
         Ok(ifid)
     }
 
     fn decode(&mut self, ifid: Option<IfId>) -> Result<Option<IdEx>, ExecutionError> {
-        debug!("DECODE <- {ifid:?}");
-
         let Some(IfId {
             instruction_word,
             next_program_counter,
         }) = ifid
         else {
-            debug!("DECODE -> None");
             return Ok(None);
         };
 
         let instruction = Instruction::try_from(instruction_word)?;
 
-        let idex = Some(match instruction {
+        Ok(Some(match instruction {
             Instruction::R(instr) => IdEx {
                 next_program_counter,
                 op: instr.op,
@@ -204,16 +258,10 @@ impl Processor {
                 rd: Register::RZero,
                 imm_addr: instr.addr,
             },
-        });
-
-        debug!("DECODE -> {idex:?}");
-
-        Ok(idex)
+        }))
     }
 
     fn execute(&mut self, idex: Option<IdEx>) -> Result<Option<ExMem>, ExecutionError> {
-        debug!("EXECUTE <- {idex:?}");
-
         let Some(IdEx {
             next_program_counter,
             op,
@@ -224,11 +272,10 @@ impl Processor {
             imm_addr,
         }) = idex
         else {
-            debug!("EXECUTE -> None");
             return Ok(None);
         };
 
-        let exmem = match op {
+        Ok(match op {
             OpCode::ArithmeticLogic => {
                 let vd = match funct {
                     Function::Add => vs.wrapping_add(vt),
@@ -291,26 +338,33 @@ impl Processor {
                 addr: imm_addr,
             }),
 
+            OpCode::Halt => {
+                self.should_halt = true;
+
+                Some(ExMem {
+                    next_program_counter,
+                    op,
+                    vd: 0,
+                    vt: 0,
+                    rd: Register::R10,
+                    addr: 0,
+                })
+            }
+
             OpCode::Nop => None,
 
             _ => unimplemented!(),
-        };
-
-        debug!("EXECUTE -> {exmem:?}");
-
-        Ok(exmem)
+        })
     }
 
     fn memory(&mut self, exmem: Option<ExMem>) -> Result<Option<MemWb>, ExecutionError> {
-        debug!("MEMORY <- {exmem:?}");
-
         let Some(ExMem {
-            next_program_counter: _,
             op,
             vd,
             vt,
             rd,
             addr,
+            ..
         }) = exmem
         else {
             return Ok(None);
@@ -319,7 +373,7 @@ impl Processor {
         // Manipulate Program counter here
         let offset_addr = (addr as u16) as i32;
 
-        let memwb = match op {
+        Ok(match op {
             OpCode::ArithmeticLogic | OpCode::LoadHigh | OpCode::LoadLow => {
                 Some(MemWb { reg: rd, value: vd })
             }
@@ -351,23 +405,16 @@ impl Processor {
             }
 
             _ => unimplemented!(),
-        };
-
-        debug!("MEMORY -> {memwb:?}");
-
-        Ok(memwb)
+        })
     }
 
     fn write_back(&mut self, memwb: Option<MemWb>) -> Result<(), ExecutionError> {
-        debug!("WRITEBACK <- {memwb:?}");
-
         let Some(MemWb { reg, value }) = memwb else {
             return Ok(());
         };
 
         self.store_reg(reg, value)?;
 
-        debug!("WRITEBACK -> ()");
         Ok(())
     }
 }
