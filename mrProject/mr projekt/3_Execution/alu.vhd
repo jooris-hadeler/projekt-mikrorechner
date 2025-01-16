@@ -13,17 +13,31 @@ end entity alu;
 architecture behaviour of alu is
   begin
     alu_prozess : process (opA, opB, op) is
+		variable shift: signed(31 downto 0);
       begin
 	
        case op is 
-		when alu_mov => result <= opB;
+		when alu_mov => result <= opA;
 	    when alu_add => result <= opA + opB;
 		when alu_sub => result <= opA - opB;
-	    when alu_lsl => result <= opA(30 downto 0) & '0';
-		when alu_lsr => result <= '0' & opA(31 downto 1);
-		when alu_asr => result <= opA(31) & opA(31 downto 1); -- arithmetische shift rechts
+	    when alu_lsl => 
+			for i in opB downto 1 loop
+				shift <= opA(30 downto 0) & '0';
+			end loop;
+			result <= shift;
+		when alu_lsr => 
+			for i in opB downto 1 loop
+				shift <= '0' & opA(31 downto 1);
+			end loop;
+			result <= shift;
+		when alu_asr => 
+			for i in opB downto 1 loop
+				shift <= opA(31) & opA(31 downto 1);
+			end loop;
+			result <= shift;
 		when alu_and => result <= opA AND opB; --and
 		when alu_or => result <= opA OR opB; --or
+		when alu_xor => result <= opA XOR opB; --or
 		when alu_not => result <= NOT opA; --not
 		
 		when alu_cmpe => if opA = opB then result <= "00000000000000000000000000000001"; -- cmpe
@@ -38,7 +52,15 @@ architecture behaviour of alu is
 		else result <= "00000000000000000000000000000000"; --cmpgt else
 		end if;
 
+		when alu_cmpgt_u => if (unsigned)opA > (unsigned)opB then result <= "00000000000000000000000000000001"; --cmpgt
+		else result <= "00000000000000000000000000000000"; --cmpgt else
+		end if;
+
 		when alu_cmplt => if opA < opB then result <= "00000000000000000000000000000001"; --cmplt
+		else result <= "00000000000000000000000000000000"; --cmplt else
+		end if;
+
+		when alu_cmplt_u => if (unsigned)opA < (unsigned)opB then result <= "00000000000000000000000000000001"; --cmplt
 		else result <= "00000000000000000000000000000000"; --cmplt else
 		end if;
 

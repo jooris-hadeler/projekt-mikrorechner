@@ -47,6 +47,8 @@ begin
     op <= alu_and;
 	wait for periodC;
     op <= alu_or;
+    wait for periodC;
+    op <= alu_xor;
 	wait for periodC;
     op <= alu_not;
 	wait for periodC;
@@ -56,7 +58,11 @@ begin
 	wait for periodC;
     op <= alu_cmpgt;
 	wait for periodC;
+    op <= alu_cmpgt_u;
+	wait for periodC;
     op <= alu_cmplt;
+	wait for periodC;
+    op <= alu_cmplt_u;
 	wait for periodC;
     wait;
 end process aluP;
