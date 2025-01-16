@@ -31,8 +31,8 @@ architecture testbench of EXTest is
     signal wE_out_out, rE_out_out, mem_to_reg_MEM_out, reg_write_MEM_out : std_logic;
 
 begin
-    EXI: EX	port map (imm_in, pc_in, alu_val_in, reg_val_in, opcode_in, rt_in, rd_in, clk, mux_sel_in, write_sel_in, wE_in, rE_in, mem_to_reg_EX_in, reg_write_EX_in
-        pc_offs_out, out_result_out, data_out, write_reg_out, wE_out_out. rE_out_out, mem_to_reg_MEM_out, reg_write_MEM_out);
+    EXI: EX	port map (imm_in, pc_in, alu_val_in, reg_val_in, opcode_in, rt_in, rd_in, clk, mux_sel_in, write_sel_in, wE_in, rE_in, mem_to_reg_EX_in, reg_write_EX_in,
+        pc_offs_out, out_result_out, data_out, write_reg_out, wE_out_out, rE_out_out, mem_to_reg_MEM_out, reg_write_MEM_out);
 
     EXP: process is
     begin
