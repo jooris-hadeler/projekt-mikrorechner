@@ -21,18 +21,21 @@ architecture behaviour of alu is
 	    when alu_add => result <= opA + opB;
 		when alu_sub => result <= opA - opB;
 	    when alu_lsl => 
-			for i in opB downto 1 loop
-				shift <= opA(30 downto 0) & '0';
+			shift := opA;
+			for i in to_integer(opB) downto 1 loop
+				shift := shift(30 downto 0) & '0';
 			end loop;
 			result <= shift;
 		when alu_lsr => 
-			for i in opB downto 1 loop
-				shift <= '0' & opA(31 downto 1);
+			shift := opA;
+			for i in to_Integer(opB) downto 1 loop
+				shift := '0' & shift(31 downto 1);
 			end loop;
 			result <= shift;
 		when alu_asr => 
-			for i in opB downto 1 loop
-				shift <= opA(31) & opA(31 downto 1);
+				shift := opA;
+			for i in to_integer(opB) downto 1 loop
+				shift := shift(31) & shift(31 downto 1);
 			end loop;
 			result <= shift;
 		when alu_and => result <= opA AND opB; --and
@@ -52,7 +55,7 @@ architecture behaviour of alu is
 		else result <= "00000000000000000000000000000000"; --cmpgt else
 		end if;
 
-		when alu_cmpgt_u => if (unsigned)opA > (unsigned)opB then result <= "00000000000000000000000000000001"; --cmpgt
+		when alu_cmpgt_u => if unsigned(opA) > unsigned(opB) then result <= "00000000000000000000000000000001"; --cmpgt
 		else result <= "00000000000000000000000000000000"; --cmpgt else
 		end if;
 
@@ -60,7 +63,7 @@ architecture behaviour of alu is
 		else result <= "00000000000000000000000000000000"; --cmplt else
 		end if;
 
-		when alu_cmplt_u => if (unsigned)opA < (unsigned)opB then result <= "00000000000000000000000000000001"; --cmplt
+		when alu_cmplt_u => if unsigned(opA) < unsigned(opB) then result <= "00000000000000000000000000000001"; --cmplt
 		else result <= "00000000000000000000000000000000"; --cmplt else
 		end if;
 

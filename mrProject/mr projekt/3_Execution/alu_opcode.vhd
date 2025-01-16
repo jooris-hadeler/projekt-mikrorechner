@@ -15,8 +15,8 @@ package alu_opcode is
     constant alu_not: signed(4 downto 0) := "01001";
     constant alu_cmpe: signed(4 downto 0) := "01010";
     constant alu_cmpne: signed(4 downto 0) := "01011";
-    constant alu_cmpgt: signed(4 downto 0) := "01011";
-    constant alu_cmpgt_u: signed(4 downto 0) := "01100";
-    constant alu_cmplt: signed(4 downto 0) := "01101";
-    constant alu_cmplt_u: signed(4 downto 0) := "01110";
+    constant alu_cmpgt: signed(4 downto 0) := "01100";
+    constant alu_cmpgt_u: signed(4 downto 0) := "01101";
+    constant alu_cmplt: signed(4 downto 0) := "01110";
+    constant alu_cmplt_u: signed(4 downto 0) := "01111";
 end alu_opcode;

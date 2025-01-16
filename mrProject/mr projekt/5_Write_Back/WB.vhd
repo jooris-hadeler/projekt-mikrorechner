@@ -13,11 +13,11 @@ entity wb_seg is
     );
 end entity wb_seg;
 
-architecture behaviour of wb_seg
+architecture behaviour of wb_seg is
     begin 
 
-    write_data <= alu_val when mem_to_reg_in = '1' else reg_val;
+    write_data <= alu_val when mem_to_reg_WB = '1' else data_val;
 
     write_reg_out <= write_reg_in; 
-    write_enable_out <= write_enable_in; 
+    write_enable_out <= reg_write_WB; 
 end behaviour; 

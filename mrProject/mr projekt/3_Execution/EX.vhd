@@ -6,13 +6,13 @@ entity ex_seg is
     port (
         imm, pc, alu_val, reg_val: in signed(31 downto 0); -- inputs ergänzen
         opcode, rt, rd: in signed(4 downto 0);
-        mux_sel, write_sel, wE, rE, mem_to_reg_EX, reg_write_EX: in std_logic; -- mux_sel für alu, write_sel für befehls_mux unten bild            
+        clk, mux_sel, write_sel, wE, rE, mem_to_reg_EX, reg_write_EX: in std_logic; -- mux_sel für alu, write_sel für befehls_mux unten bild            
         pc_offs, out_result, data: out signed(31 downto 0);
         write_reg: out signed(4 downto 0); -- wird durchgereicht vom mux
         wE_out, rE_out, mem_to_reg_MEM, reg_write_MEM : out std_logic);
 end entity ex_seg;
 
-architecture behaviour of ex_seg
+architecture behaviour of ex_seg is
     component alu is
     port(
         opA, opB: in signed(31 downto 0);
@@ -20,7 +20,7 @@ architecture behaviour of ex_seg
 		op: in signed(4 downto 0));
     end component;
 
-    signal result, mux_var: signed(31 downto 0);
+    signal alu_result, mux_var: signed(31 downto 0);
 
     begin
         aluI: alu	port map (alu_val, mux_var, alu_result, opcode);

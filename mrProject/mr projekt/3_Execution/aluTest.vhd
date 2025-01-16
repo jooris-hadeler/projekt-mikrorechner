@@ -30,7 +30,7 @@ begin
     -- opA <= "10101010101010101010101010101010";
     -- opB <= "01010101010101010101010101010101";
     opA <= to_signed(100, 32);
-    opB <= to_signed(-10, 32);
+    opB <= to_signed(4, 32);
     
     op <= alu_mov;
 	wait for periodC;

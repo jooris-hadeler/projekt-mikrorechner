@@ -1,0 +1,9 @@
+v 4
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/aluTest.vhd" "06bee3be75985a63f5fe6fb0910b2cd553f1986d" "20250116140309.937":
+  entity alutest at 1( 0) + 0 on 30;
+  architecture testbench of alutest at 13( 235) + 0 on 31;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu_opcode.vhd" "b312f59124e3cd239478dbe4dcfa60d32c8b0d13" "20250116135430.867":
+  package alu_opcode at 1( 0) + 0 on 17;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu.vhd" "5118e9d45d0ae0f305f70f208a4bda6b815b497f" "20250116135441.515":
+  entity alu at 1( 0) + 0 on 18;
+  architecture behaviour of alu at 13( 258) + 0 on 19;
