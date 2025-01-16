@@ -2,7 +2,6 @@ package assembler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.apache.commons.cli.*;
 
