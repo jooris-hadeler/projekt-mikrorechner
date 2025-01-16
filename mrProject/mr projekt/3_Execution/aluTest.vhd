@@ -27,8 +27,6 @@ begin
 
     aluP: process is
     begin
-    -- opA <= "10101010101010101010101010101010";
-    -- opB <= "01010101010101010101010101010101";
     opA <= to_signed(100, 32);
     opB <= to_signed(4, 32);
     
