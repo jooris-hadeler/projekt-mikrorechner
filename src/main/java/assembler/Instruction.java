@@ -45,7 +45,7 @@ public enum Instruction {
     halt(Type.UNDEFINED, 21),
     noop(Type.UNDEFINED, 22),
 
-    jl(Type.UNDEFINED, -1);
+    jl(Type.MACRO, -1);
 
     private final Type type;
     private final int opcode;
