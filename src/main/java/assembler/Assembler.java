@@ -6,29 +6,32 @@ import java.util.HashMap;
 
 public class Assembler {
 
-    private static final int bytesPerInstruction = 4;
-    private static final int bitsPerInstruction = 8 * bytesPerInstruction;
-    private static final int bitsOpcode = 6;
-    private static final int bitsRegister = 5;
-    private static final int bitsFunct = 6;
-    private static final int bitsImmediate = 16;
-    private static final int bitsAddress = 26;
+    public static final int bytesPerInstruction = 4;
+    public static final int bitsPerInstruction = 8 * bytesPerInstruction;
+    public static final int bitsOpcode = 6;
+    public static final int bitsRegister = 5;
+    public static final int bitsFunct = 6;
+    public static final int bitsImmediate = 16;
+    public static final int bitsAddress = 26;
 
     private static int index = 0;
 
-    private static ArrayList<Integer> out = null;
+    private static ArrayList<Integer> assembledData = null;
 
     private static HashMap<String, Integer> labels = null;
+    private static HashMap<Integer, String> jumpLabels = null;
 
     public static int[] assemble(File input) {
-        out = new ArrayList<>();
+        assembledData = new ArrayList<>();
         labels = new HashMap<>();
+        jumpLabels = new HashMap<>();
 
         String line = "";
         try (BufferedReader in = new BufferedReader(new FileReader(input))) {
             while ((line = in.readLine()) != null) {
                 singleInstruction(line);
             }
+            postprocess();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
@@ -38,22 +41,20 @@ public class Assembler {
             System.exit(1);
         }
 
-        int[] array = new int[out.size()];
+
+
+        int[] array = new int[assembledData.size()];
         for (int i = 0; i < array.length; i++) {
-            array[i] = out.get(i);
+            array[i] = assembledData.get(i);
         }
         return array;
     }
 
     private static void singleInstruction(String line) {
-        System.out.println(line);
+        System.out.println(index + ": " + line);
         line = line.trim();
         if (line.endsWith(":")) {
-            boolean doesLabelAlreadyExist = tryRememberLabel(line.substring(0, line.length() - 1));
-            if (doesLabelAlreadyExist) {
-                throw new RuntimeException("Label already exists in another line");
-            }
-            index++;
+            labelInstruction(line);
             return;
         }
 
@@ -61,17 +62,22 @@ public class Assembler {
         if (instruction.getType() == Instruction.Type.R
                 || instruction.getType() == Instruction.Type.I
                 || instruction.getType() == Instruction.Type.J) {
-            out.add(simpleInstruction(line));
+            assembledData.add(simpleInstruction(line));
             index++;
         } else if (instruction.getType() == Instruction.Type.MACRO) {
             int[] bits = specialInstruction(line);
             for (int i = 0; i < bits.length; i++) {
-                out.add(bits[i]);
+                assembledData.add(bits[i]);
                 index++;
             }
         } else {
             throw new RuntimeException("Unknown instruction: " + instruction);
         }
+    }
+
+    private static void labelInstruction(String line) {
+        saveKnownLabel(line.substring(0, line.length() - 1));
+        index++;
     }
 
     private static int simpleInstruction(String line) {
@@ -127,17 +133,19 @@ public class Assembler {
     }
 
     private static int[] specialInstruction(String line) {
-        String op = extractOperatorString(line);
-        if (op.equalsIgnoreCase("jl")) {
+        Instruction instruction = parseInstruction(line);
+        if (instruction.equals(Instruction.jl)) {
             return jumpLabelInstruction(line);
         }
         return new int[0];
     }
 
     private static int[] jumpLabelInstruction(String line) {
-        int[] out = new int[3];
-        if (!tryRememberLabel(extractArgumentString(line, 0))) {
-            throw new RuntimeException("Can only jump to labels already seen right now");
+        int[] out = {0,0,0};
+        String label = extractArgumentString(line, 0);
+        if (!labels.containsKey(label)) {
+            saveUnknownLabel(label);
+            return out;
         }
         int address = labels.get(extractArgumentString(line, 0));
         out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
@@ -146,12 +154,30 @@ public class Assembler {
         return out;
     }
 
-    private static boolean tryRememberLabel(String label) {
+    private static void saveKnownLabel(String label) {
         if (labels.containsKey(label)) {
-            return true;
+            throw new RuntimeException("Label already exists in another line");
         }
         labels.put(label, bytesPerInstruction * index);
-        return false;
+    }
+
+    private static void saveUnknownLabel(String label) {
+        jumpLabels.put(index, label);
+    }
+
+    private static void postprocess() {
+        for (Integer jlIndex : jumpLabels.keySet()) {
+            index = jlIndex;
+            String label = jumpLabels.get(index);
+            if (!labels.containsKey(label)) {
+                throw new RuntimeException("Unknown label: " + label);
+            }
+            System.out.println(jlIndex);
+            int[] instructions = jumpLabelInstruction("jl " + label);
+            assembledData.set(index, instructions[0]);
+            assembledData.set(index + 1, instructions[1]);
+            assembledData.set(index + 2, instructions[2]);
+        }
     }
 
     private static String extractOperatorString(String line) {

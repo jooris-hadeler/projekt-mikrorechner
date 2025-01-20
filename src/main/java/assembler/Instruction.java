@@ -2,6 +2,7 @@ package assembler;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum Instruction {
 
@@ -84,6 +85,10 @@ public enum Instruction {
     public static String mostSimilarByString(String str) {
         List<String> instructions = Arrays.stream(Instruction.values()).map(Instruction::toString).toList();
         return Util.mostSimilarByString(str, instructions);
+    }
+
+    public static String valueOf(int value) {
+        return Arrays.stream(Instruction.values()).filter(e -> e.opcode == value).findFirst().get().toString();
     }
 
 }
