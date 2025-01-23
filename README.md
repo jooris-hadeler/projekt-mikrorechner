@@ -11,5 +11,5 @@ To use assembler run:
 To run include example run following command in the root directory of the project:
 
 ```
-./assembler -f ./src/examples/includes/test.txt -o ./default.out
+./assembler -f ./src/examples/includes/test.txt -o ./src/examples/includes/default.out
 ```
