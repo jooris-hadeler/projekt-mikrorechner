@@ -21,6 +21,9 @@ public class Assembler {
     private static HashMap<String, Integer> labels = null;
     private static HashMap<Integer, String> jumpLabels = null;
 
+    /*
+    TODO: ; at the end of line == comment
+     */
     public static int[] assemble(File input) {
         assembledData = new ArrayList<>();
         labels = new HashMap<>();
@@ -29,6 +32,9 @@ public class Assembler {
         String line = "";
         try (BufferedReader in = new BufferedReader(new FileReader(input))) {
             while ((line = in.readLine()) != null) {
+                if (line.isBlank()) {
+                    continue;
+                }
                 singleInstruction(line);
             }
             postprocess();
@@ -40,8 +46,6 @@ public class Assembler {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-
-
 
         int[] array = new int[assembledData.size()];
         for (int i = 0; i < array.length; i++) {
@@ -65,7 +69,7 @@ public class Assembler {
             assembledData.add(simpleInstruction(line));
             index++;
         } else if (instruction.getType() == Instruction.Type.MACRO) {
-            int[] bits = specialInstruction(line);
+            int[] bits = macroInstruction(line);
             for (int i = 0; i < bits.length; i++) {
                 assembledData.add(bits[i]);
                 index++;
@@ -132,16 +136,24 @@ public class Assembler {
         return out;
     }
 
-    private static int[] specialInstruction(String line) {
+    private static int[] macroInstruction(String line) {
         Instruction instruction = parseInstruction(line);
         if (instruction.equals(Instruction.jl)) {
             return jumpLabelInstruction(line);
         }
+        if (instruction.equals(Instruction.noop) || instruction.equals(Instruction.nop)) {
+            return noopInstruction(line);
+        }
         return new int[0];
     }
 
+    private static int[] noopInstruction(String line) {
+        int noop = Instruction.noop.getOpcode() << (bitsPerInstruction - bitsOpcode);
+        return new int[]{noop};
+    }
+
     private static int[] jumpLabelInstruction(String line) {
-        int[] out = {0,0,0};
+        int[] out = {0, 0, 0};
         String label = extractArgumentString(line, 0);
         if (!labels.containsKey(label)) {
             saveUnknownLabel(label);
@@ -172,7 +184,6 @@ public class Assembler {
             if (!labels.containsKey(label)) {
                 throw new RuntimeException("Unknown label: " + label);
             }
-            System.out.println(jlIndex);
             int[] instructions = jumpLabelInstruction("jl " + label);
             assembledData.set(index, instructions[0]);
             assembledData.set(index + 1, instructions[1]);
@@ -192,7 +203,7 @@ public class Assembler {
     private static Instruction parseInstruction(String line) {
         String instructionString = extractOperatorString(line);
         try {
-            Instruction instruction = Instruction.valueOf(instructionString);
+            Instruction instruction = Instruction.valueOf(instructionString.toLowerCase());
             return instruction;
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Unknown instruction "
@@ -204,7 +215,7 @@ public class Assembler {
 
     private static String extractArgumentString(String line, int argumentIndex) {
         try {
-            String[] tokens = line.split(" ")[1].split(",");
+            String[] tokens = line.split(" ", 2)[1].split(",");
             String strip = tokens[argumentIndex].strip();
             return strip;
         } catch (ArrayIndexOutOfBoundsException e) {

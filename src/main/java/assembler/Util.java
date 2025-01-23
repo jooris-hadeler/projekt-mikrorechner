@@ -1,7 +1,11 @@
 package assembler;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -56,6 +60,21 @@ public class Util {
         intBuffer.put(array);
 
         return byteBuffer.array();
+    }
+
+    public static void writeToFile(String[] s, File f) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
+            for (int i = 0; i < s.length; i++) {
+                out.write(s[i] + "\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int convert(byte[] array) {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(array);
+        return byteBuffer.getInt();
     }
 
 }

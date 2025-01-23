@@ -37,15 +37,11 @@ public class Main {
                                     .build();
         options.addOption(outputOption);
 
-        Option assembleOption = Option.builder("a")
-                .longOpt("assemble")
-                .desc("Is given implicitly if disassemble is not given")
-                .build();
+        Option assembleOption =
+                Option.builder("a").longOpt("assemble").desc("Is given implicitly if disassemble is not given").build();
         options.addOption(assembleOption);
 
-        Option disassembleOption = Option.builder("d")
-                .longOpt("disassemble")
-                .build();
+        Option disassembleOption = Option.builder("d").longOpt("disassemble").build();
         options.addOption(disassembleOption);
 
         CommandLineParser parser = new DefaultParser();
@@ -61,13 +57,12 @@ public class Main {
             if (!line.hasOption("o")) {
                 outputFile = new File("./default.out");
             } else {
-                outputFile = new File(line.getOptionValue(fileOption));
+                outputFile = new File(line.getOptionValue(outputOption));
             }
 
-            if(line.hasOption("d")) {
+            if (line.hasOption("d")) {
                 assemble = false;
             }
-
 
         } catch (ParseException exp) {
             // oops, something went wrong
@@ -83,7 +78,7 @@ public class Main {
             }
         }
 
-        if(assemble) {
+        if (assemble) {
             assemble();
         } else {
             disassemble();
@@ -91,7 +86,7 @@ public class Main {
 
     }
 
-    private static void assemble(){
+    private static void assemble() {
         System.out.println("Starting assembler...");
 
         int[] bits = Assembler.assemble(inputFile);
@@ -100,12 +95,21 @@ public class Main {
         System.out.println("Assembling complete, writing to file");
 
         Util.writeToFile(Util.convert(bits), outputFile);
+
+        System.out.println("Writing to file completed");
     }
 
     private static void disassemble() {
         System.out.println("Starting disassembler...");
 
+        String[] lines = Disassembler.disassemble(inputFile);
 
+        System.out.println("Linecount: " + lines.length);
+        System.out.println("Disassembling complete, writing to file");
+
+        Util.writeToFile(lines, outputFile);
+
+        System.out.println("Writing to file completed");
 
     }
 }

@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 public enum Instruction {
 
-    //noop(Type.UNDEFINED, 0,0),
     add(Type.R, 0, 0),
     sub(Type.R, 0, 1),
     and(Type.R, 0, 2),
@@ -44,9 +43,10 @@ public enum Instruction {
     ret(Type.UNDEFINED, 19),
     trap(Type.UNDEFINED, 20),
     halt(Type.UNDEFINED, 21),
-    noop(Type.UNDEFINED, 22),
 
-    jl(Type.MACRO, -1);
+    jl(Type.MACRO, -1),
+    noop(Type.MACRO, 63, 0),
+    nop(Type.MACRO, 63, 0);
 
     private final Type type;
     private final int opcode;

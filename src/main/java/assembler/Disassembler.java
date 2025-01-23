@@ -1,7 +1,9 @@
 package assembler;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,13 +15,13 @@ public class Disassembler {
 
     private static int index = 0;
 
-    public static String[] assemble(File input) {
+    public static String[] disassemble(File input) {
         lines = new ArrayList<>();
 
-        String line = "";
-        try (BufferedReader in = new BufferedReader(new FileReader(input))) {
-            while ((line = in.readLine()) != null) {
-                singleInstruction(line);
+        byte[] line = new byte[Assembler.bytesPerInstruction];
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(input))) {
+            while (bis.read(line) != -1) {
+                singleInstruction(Util.convert(line));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,11 +35,11 @@ public class Disassembler {
         return lines.toArray(new String[lines.size()]);
     }
 
-    private static String singleInstruction(int instruction) {
-        return Instruction.valueOf(getOpcode(instruction));
+    private static void singleInstruction(int instruction) {
+        lines.add(Instruction.valueOf(getOpcode(instruction)));
     }
 
-    private static int getOpcode(int line){
+    private static int getOpcode(int line) {
         return line >> (Assembler.bitsPerInstruction - Assembler.bitsOpcode);
     }
 
