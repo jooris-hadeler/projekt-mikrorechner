@@ -49,13 +49,13 @@ public enum Register {
 
     public static Register getValue(String s) {
         s = s.trim();
-        if (s.startsWith("%")) {
+        if (s.startsWith("$")) {
             s = s.substring(1);
         }
-        if (s.equalsIgnoreCase("RSP")) {
+        if (s.equalsIgnoreCase("RSP") || s.equals("30")) {
             return RegisterStackPointer;
         }
-        if (s.equalsIgnoreCase("RBP")) {
+        if (s.equalsIgnoreCase("RBP") || s.equals("31")) {
             return RegisterBasePointer;
         }
         return valueOf(s.toUpperCase());
