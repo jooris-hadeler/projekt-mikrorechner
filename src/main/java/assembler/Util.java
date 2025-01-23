@@ -46,7 +46,7 @@ public class Util {
 
     public static List<String> readLines(File f) {
         try {
-            return new ArrayList<>(new BufferedReader(new FileReader(f)).lines().toList());
+            return new BufferedReader(new FileReader(f)).lines().toList();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

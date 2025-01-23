@@ -5,5 +5,11 @@
 To use assembler run:
 
 ```
-java -jar assembler.jar -f inputFile -o outputFile
+./assembler -f inputFile -o outputFile
+```
+
+To run include example run following command in the root directory of the project:
+
+```
+./assembler -f ./src/examples/includes/test.txt -o ./default.out
 ```

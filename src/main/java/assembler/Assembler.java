@@ -61,7 +61,7 @@ public class Assembler {
             String line = lines.get(i);
             if (isInclude(line)) {
                 System.out.println(line);
-                concatenatedLines.addAll(0, concatenateContainingIncludes(getIncludeFile(line)));
+                concatenatedLines.addAll(0, concatenateContainingIncludes(getIncludeFile(line, input)));
             } else {
                 concatenatedLines.add(0, line);
             }
@@ -282,8 +282,9 @@ public class Assembler {
         return false;
     }
 
-    private static File getIncludeFile(String line) {
-        return new File(line.split(" ")[1]);
+    private static File getIncludeFile(String line, File relative) {
+
+        return new File(relative.getParent() + line.split(" ")[1]);
     }
 
 }

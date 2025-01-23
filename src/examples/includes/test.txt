@@ -1,4 +1,4 @@
-#include ./test2.txt
+#include ./test/test2.txt
 add R0,R0,R1
 add R0,R0,R1
 NOP
