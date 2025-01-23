@@ -40,7 +40,7 @@ public class Disassembler {
     }
 
     private static int getOpcode(int line) {
-        return line >> (Assembler.bitsPerInstruction - Assembler.bitsOpcode);
+        return line >>> (Assembler.bitsPerInstruction - Assembler.bitsOpcode);
     }
 
 }

@@ -3,6 +3,7 @@ package assembler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,6 +42,14 @@ public class Util {
             return instructions.get(index - 1);
         }
         return "?";
+    }
+
+    public static List<String> readLines(File f) {
+        try {
+            return new ArrayList<>(new BufferedReader(new FileReader(f)).lines().toList());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void writeToFile(byte[] bits, File f) {

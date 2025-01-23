@@ -3,6 +3,7 @@ package assembler;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Assembler {
 
@@ -21,17 +22,17 @@ public class Assembler {
     private static HashMap<String, Integer> labels = null;
     private static HashMap<Integer, String> jumpLabels = null;
 
-    /*
-    TODO: ; at the end of line == comment
-     */
     public static int[] assemble(File input) {
         assembledData = new ArrayList<>();
         labels = new HashMap<>();
         jumpLabels = new HashMap<>();
 
         String line = "";
-        try (BufferedReader in = new BufferedReader(new FileReader(input))) {
-            while ((line = in.readLine()) != null) {
+        List<String> lines = concatenateContainingIncludes(input);
+        try {
+
+            for (int i = 0; i < lines.size(); i++) {
+                line = lines.get(i);
                 line = preprocess(line);
                 if (line.isBlank()) {
                     continue;
@@ -39,8 +40,6 @@ public class Assembler {
                 singleInstruction(line);
             }
             postprocess();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (RuntimeException e) {
             System.err.println("Exception in line " + index + ": ");
             System.err.println(line);
@@ -53,6 +52,21 @@ public class Assembler {
             array[i] = assembledData.get(i);
         }
         return array;
+    }
+
+    public static List<String> concatenateContainingIncludes(File input) {
+        List<String> lines = Util.readLines(input);
+        ArrayList<String> concatenatedLines = new ArrayList<>();
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            String line = lines.get(i);
+            if (isInclude(line)) {
+                System.out.println(line);
+                concatenatedLines.addAll(0, concatenateContainingIncludes(getIncludeFile(line)));
+            } else {
+                concatenatedLines.add(0, line);
+            }
+        }
+        return concatenatedLines;
     }
 
     private static void singleInstruction(String line) {
@@ -259,6 +273,17 @@ public class Assembler {
 
     private static int parseAddress(String arg) {
         return Util.parseInt(arg, bitsAddress);
+    }
+
+    private static boolean isInclude(String line) {
+        if (line.startsWith("#include")) {
+            return true;
+        }
+        return false;
+    }
+
+    private static File getIncludeFile(String line) {
+        return new File(line.split(" ")[1]);
     }
 
 }

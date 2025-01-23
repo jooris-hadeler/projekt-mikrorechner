@@ -1,0 +1,6 @@
+llo R11,R11,1
+llo R11,R11,11
+llo R11,R11,11
+llo R11,R11,11
+llo R11,R11,11
+llo R11,R11,112
