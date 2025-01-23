@@ -32,6 +32,7 @@ public class Assembler {
         String line = "";
         try (BufferedReader in = new BufferedReader(new FileReader(input))) {
             while ((line = in.readLine()) != null) {
+                line = preprocess(line);
                 if (line.isBlank()) {
                     continue;
                 }
@@ -175,6 +176,13 @@ public class Assembler {
 
     private static void saveUnknownLabel(String label) {
         jumpLabels.put(index, label);
+    }
+
+    private static String preprocess(String line) {
+        if (line.contains(";")) {
+            return line.split(";")[0];
+        }
+        return line;
     }
 
     private static void postprocess() {
