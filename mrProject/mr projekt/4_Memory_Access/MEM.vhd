@@ -2,12 +2,13 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.memPkg.all;
+--library work;
 -- memory sim referenzen
 
 -- logisches and oder or in dieser stufe recherchierena
 -- kontroll signale in allen stufen überprüfen
 
-entity mem_seg is 
+entity MEM is 
     port (
         pc_in, adress_in: in signed(31 downto 0);-- in der stufe auf 16 bit kürzen (hinten bleibt)
         write_data : in std_logic_vector(31 downto 0);
@@ -15,9 +16,9 @@ entity mem_seg is
         read_data, adress_out, pc_out: out signed(31 downto 0);
         mem_to_reg_WB, reg_write_WB : out std_logic
     );
-end entity mem_seg;
+end entity MEM;
 
-architecture behaviour of mem_seg is
+architecture behaviour of MEM is
     component ramIO is
     generic (
         addrWd	: integer range 2 to 16	:= 8;	-- #address bits
