@@ -10,10 +10,10 @@ use work.memPkg.all;
 
 entity MEM is 
     port (
-        pc_in, adress_in: in signed(31 downto 0);-- in der stufe auf 16 bit kürzen (hinten bleibt)
+        pc_in, adress_in: in std_logic_vector(31 downto 0);-- in der stufe auf 16 bit kürzen (hinten bleibt)
         write_data : in std_logic_vector(31 downto 0);
         clk, writeE, readE, mem_to_reg_in, reg_write_in, mem_to_reg_MEM, reg_write_MEM  : in std_logic;
-        read_data, adress_out, pc_out: out signed(31 downto 0);
+        read_data, adress_out, pc_out: out std_logic_vector(31 downto 0);
         mem_to_reg_WB, reg_write_WB : out std_logic
     );
 end entity MEM;
@@ -35,7 +35,7 @@ architecture behaviour of MEM is
 
     signal read: std_logic_vector(31 downto 0);
     signal adress : std_logic_vector(15 downto 0);
-    signal sel_alu_val, sel_reg_val : signed(4 downto 0);
+    signal sel_alu_val, sel_reg_val : std_logic_vector(4 downto 0);
     
     begin
 
@@ -50,7 +50,7 @@ architecture behaviour of MEM is
                     pc_out <= pc_in;
                     mem_to_reg_WB <= mem_to_reg_in;
                     reg_write_WB <= reg_write_in;
-                    read_data <= signed(read);
+                    read_data <= std_logic_vector(read);
             end if;
         end process mem_seg_process;
 end behaviour;

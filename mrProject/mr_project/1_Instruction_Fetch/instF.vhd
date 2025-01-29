@@ -3,16 +3,16 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.memPkg.all;        -- Import des gesamten Packages memPkg
 
-entity instf_seg is -- Schnittstelle des Instruction-Fetch
+entity instF is -- Schnittstelle des Instruction-Fetch
     port (
         pc_in : in std_logic_vector(31 downto 0); -- Eingabe des aktuellen PC Counts
         pc_out: out std_logic_vector(31 downto 0); -- Ausgabe des inkrementierten PC Counts
         instruction: out std_logic_vector (31 downto 0);-- Die gelesene Instruction aus dem ROM
         clk : in std_logic -- Takt-Signal
     );
-end instf_seg;
+end instF;
 
-architecture behaviour of instf_seg
+architecture behaviour of instF
 
 is component rom is
     generic (
@@ -52,8 +52,7 @@ is component rom is
                 result := unsigned(pc_in) + 1;
                 pc_out <= std_logic_vector(result); --increase pc count um 1
                 instruction <= instruction_mem; --instruction wird auf den aus ROM geladenen Befehl gesetzt
-                assert instruction_mem = "0000000000000000000000000000" report "test";
-        
+                
         end if;
     end process instf_seg_process;
 end behaviour;

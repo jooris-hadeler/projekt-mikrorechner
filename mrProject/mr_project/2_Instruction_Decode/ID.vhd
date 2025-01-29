@@ -9,7 +9,8 @@ entity id_seg is
         write_reg :                      in std_logic_vector(4 downto 0);
         pc_out, alu_val, reg_val, imm :  out std_logic_vector(31 downto 0);
         alu_op, rd, rt :                 out std_logic_vector(4 downto 0);
-        alu_src, reg_dest, mem_to_reg_EX, reg_write_EX :              out std_logic -- weitere kontrollsignale hinzufügen
+        alu_src, reg_dest, mem_to_reg_EX, reg_write_EX :              
+        out std_logic -- weitere kontrollsignale hinzufügen
     );
 end entity id_seg;
 
