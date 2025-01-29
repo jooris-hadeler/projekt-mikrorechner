@@ -1,0 +1,127 @@
+$date
+  Wed Jan 29 17:17:19 2025
+$end
+$version
+  GHDL v0
+$end
+$timescale
+  1 fs
+$end
+$scope module standard $end
+$upscope $end
+$scope module std_logic_1164 $end
+$upscope $end
+$scope module numeric_std $end
+$upscope $end
+$scope module alu_opcode $end
+$upscope $end
+$scope module idtest $end
+$var reg 32 ! pc_in_in[31:0] $end
+$var reg 32 " instruction_in[31:0] $end
+$var reg 32 # write_data_in[31:0] $end
+$var reg 1 $ clk_in $end
+$var reg 1 % reg_we_in $end
+$var reg 5 & write_reg_in[4:0] $end
+$var reg 32 ' pc_out_out[31:0] $end
+$var reg 32 ( alu_val_out[31:0] $end
+$var reg 32 ) reg_val_out[31:0] $end
+$var reg 32 * imm_out[31:0] $end
+$var reg 5 + alu_op_out[4:0] $end
+$var reg 5 , rd_out[4:0] $end
+$var reg 5 - rt_out[4:0] $end
+$var reg 1 . alu_src_out $end
+$var reg 1 / reg_dest_out $end
+$var reg 1 0 mem_to_reg_ex_out $end
+$var reg 1 1 reg_write_ex_out $end
+$scope module idi $end
+$var reg 32 2 pc_in[31:0] $end
+$var reg 32 3 instruction[31:0] $end
+$var reg 32 4 write_data[31:0] $end
+$var reg 1 5 clk $end
+$var reg 1 6 reg_we $end
+$var reg 5 7 write_reg[4:0] $end
+$var reg 32 8 pc_out[31:0] $end
+$var reg 32 9 alu_val[31:0] $end
+$var reg 32 : reg_val[31:0] $end
+$var reg 32 ; imm[31:0] $end
+$var reg 5 < alu_op[4:0] $end
+$var reg 5 = rd[4:0] $end
+$var reg 5 > rt[4:0] $end
+$var reg 1 ? alu_src $end
+$var reg 1 @ reg_dest $end
+$var reg 1 A mem_to_reg_ex $end
+$var reg 1 B reg_write_ex $end
+$var reg 5 C sel_alu_val[4:0] $end
+$var reg 5 D sel_reg_val[4:0] $end
+$scope module registerbanki $end
+$var reg 1 E clk $end
+$var reg 32 F din[31:0] $end
+$var reg 32 G douta[31:0] $end
+$var reg 32 H doutb[31:0] $end
+$var reg 5 I sela[4:0] $end
+$var reg 5 J selb[4:0] $end
+$var reg 5 K seld[4:0] $end
+$var reg 1 L we $end
+$comment registers is not handled $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+b00000000000000000000000000000001 !
+b00000000000000000000000000000001 "
+b00000000000000000000000000000001 #
+0$
+1%
+b00001 &
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU '
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU (
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU )
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU *
+bUUUUU +
+bUUUUU ,
+bUUUUU -
+U.
+U/
+U0
+U1
+b00000000000000000000000000000001 2
+b00000000000000000000000000000001 3
+b00000000000000000000000000000001 4
+05
+16
+b00001 7
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU 8
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU 9
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU :
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU ;
+bUUUUU <
+bUUUUU =
+bUUUUU >
+U?
+U@
+UA
+UB
+b00000 C
+b00000 D
+0E
+b00000000000000000000000000000001 F
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU G
+bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU H
+b00000 I
+b00000 J
+b00001 K
+1L
+#10000000
+1$
+b00000000000000000000000000000001 '
+b00000000000000000000000000000001 *
+b00000 ,
+b00000 -
+15
+b00000000000000000000000000000001 8
+b00000000000000000000000000000001 ;
+b00000 =
+b00000 >
+1E
+#20000000

@@ -12,9 +12,9 @@ entity registerbank is
         dIn : in signed(31 downto 0); --input
         dOutA : out signed(31 downto 0); --outputA
         dOutB : out signed(31 downto 0); --outputB
-        selA : in signed(4 downto 0); --Registernr für dOutA
-        selB : in signed(4 downto 0); --Registernr für dOutB
-        selD : in signed(4 downto 0); --Registernr für dIn
+        selA : in STD_LOGIC_VECTOR(4 downto 0); --Registernr für dOutA
+        selB : in STD_LOGIC_VECTOR(4 downto 0); --Registernr für dOutB
+        selD : in STD_LOGIC_VECTOR(4 downto 0); --Registernr für dIn
         wE : in std_logic);
 end entity registerbank; 
 

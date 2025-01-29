@@ -1,32 +1,44 @@
 v 4
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "5_Write_Back/WBTest.vhd" "181ff24b8a6255c917ca57dd2e452f2b52d58c8e" "20250126125107.300":
-  entity wbtest at 1( 0) + 0 on 91;
-  architecture testbench of wbtest at 13( 233) + 0 on 92;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "4_Memory_Access/MEMTest.vhd" "b67d37230c5596f831a0bce514b210a2e1a23f6c" "20250126120135.025":
-  entity memtest at 1( 0) + 0 on 75;
-  architecture testbench of memtest at 13( 235) + 0 on 76;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "work/memorySim/ramIO.vhd" "42fbed895c0020a0f180ab8cc0e0d314a23c90ae" "20250126111501.866":
-  entity ramio at 19( 787) + 0 on 67;
-  architecture simmodel of ramio at 41( 1601) + 0 on 68;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/EXTest.vhd" "7b4a6eb2d70f454eb84d6d15376158fed2d59bb7" "20250126110154.520":
-  entity extest at 1( 0) + 0 on 64;
-  architecture testbench of extest at 13( 233) + 0 on 65;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/aluTest.vhd" "06bee3be75985a63f5fe6fb0910b2cd553f1986d" "20250116140309.937":
-  entity alutest at 1( 0) + 0 on 30;
-  architecture testbench of alutest at 13( 235) + 0 on 31;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu_opcode.vhd" "b312f59124e3cd239478dbe4dcfa60d32c8b0d13" "20250126104527.764":
-  package alu_opcode at 1( 0) + 0 on 51;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu.vhd" "5118e9d45d0ae0f305f70f208a4bda6b815b497f" "20250126104532.730":
-  entity alu at 1( 0) + 0 on 52;
-  architecture behaviour of alu at 13( 258) + 0 on 53;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/EX.vhd" "6c93b7a3429fa5581a5623ad0bf7f9c52d2e0c14" "20250126110152.130":
-  entity ex at 1( 0) + 0 on 62;
-  architecture behaviour of ex at 15( 598) + 0 on 63;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "work/memorySim/memPkg.vhd" "f2eb11c85fefb6b64f750537892be1d8b6c0f716" "20250126111207.537":
-  package mempkg at 18( 752) + 0 on 66;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "4_Memory_Access/MEM.vhd" "c54e7bfcebd7a8979b978505d9f1aa7d82271532" "20250126120132.149":
-  entity mem at 1( 0) + 0 on 73;
-  architecture behaviour of mem at 21( 664) + 0 on 74;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "2_Instruction_Decode/ID.vhd" "d0fc6e563ed5198cb2f68df85e8c823c127df3b1" "20250129161711.270":
+  entity id at 1( 0) + 0 on 111;
+  architecture behaviour of id at 15( 615) + 0 on 112;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "2_Instruction_Decode/registerbank.vhd" "2aab2ee6d9860567a043ed55d1b6ea6a346b5716" "20250129160227.316":
+  entity registerbank at 6( 247) + 0 on 103;
+  architecture behaviour of registerbank at 21( 802) + 0 on 104;
 file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "5_Write_Back/WB.vhd" "8cd64aa850d14003351e2c1755b915a7ee07d0ff" "20250126124523.106":
   entity wb at 1( 0) + 0 on 87;
   architecture behaviour of wb at 16( 408) + 0 on 88;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "4_Memory_Access/MEM.vhd" "c54e7bfcebd7a8979b978505d9f1aa7d82271532" "20250126120132.149":
+  entity mem at 1( 0) + 0 on 73;
+  architecture behaviour of mem at 21( 664) + 0 on 74;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "work/memorySim/memPkg.vhd" "f2eb11c85fefb6b64f750537892be1d8b6c0f716" "20250126111207.537":
+  package mempkg at 18( 752) + 0 on 66;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/EX.vhd" "6c93b7a3429fa5581a5623ad0bf7f9c52d2e0c14" "20250126110152.130":
+  entity ex at 1( 0) + 0 on 62;
+  architecture behaviour of ex at 15( 598) + 0 on 63;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu.vhd" "5118e9d45d0ae0f305f70f208a4bda6b815b497f" "20250126104532.730":
+  entity alu at 1( 0) + 0 on 52;
+  architecture behaviour of alu at 13( 258) + 0 on 53;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/alu_opcode.vhd" "b312f59124e3cd239478dbe4dcfa60d32c8b0d13" "20250126104527.764":
+  package alu_opcode at 1( 0) + 0 on 51;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/aluTest.vhd" "06bee3be75985a63f5fe6fb0910b2cd553f1986d" "20250116140309.937":
+  entity alutest at 1( 0) + 0 on 30;
+  architecture testbench of alutest at 13( 235) + 0 on 31;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "3_Execution/EXTest.vhd" "7b4a6eb2d70f454eb84d6d15376158fed2d59bb7" "20250126110154.520":
+  entity extest at 1( 0) + 0 on 64;
+  architecture testbench of extest at 13( 233) + 0 on 65;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "work/memorySim/ramIO.vhd" "42fbed895c0020a0f180ab8cc0e0d314a23c90ae" "20250126111501.866":
+  entity ramio at 19( 787) + 0 on 67;
+  architecture simmodel of ramio at 41( 1601) + 0 on 68;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "4_Memory_Access/MEMTest.vhd" "b67d37230c5596f831a0bce514b210a2e1a23f6c" "20250126120135.025":
+  entity memtest at 1( 0) + 0 on 75;
+  architecture testbench of memtest at 13( 235) + 0 on 76;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "5_Write_Back/WBTest.vhd" "181ff24b8a6255c917ca57dd2e452f2b52d58c8e" "20250126125107.300":
+  entity wbtest at 1( 0) + 0 on 91;
+  architecture testbench of wbtest at 13( 233) + 0 on 92;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "2_Instruction_Decode/registerbankTest.vhd" "f5632b67605a34b395d291efa545c423e80bcabe" "20250129160231.836":
+  entity registerbanktest at 1( 0) + 0 on 105;
+  architecture testbench of registerbanktest at 11( 218) + 0 on 106;
+file "/home/christopher/Documents/Projekt/projekt-mikrorechner/mrProject/mr projekt/" "2_Instruction_Decode/IDTest.vhd" "b0afd7df39722aa013897552cc0841b224f9e737" "20250129161715.601":
+  entity idtest at 1( 0) + 0 on 113;
+  architecture testbench of idtest at 13( 233) + 0 on 114;
