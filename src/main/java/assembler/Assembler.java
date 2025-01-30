@@ -164,12 +164,69 @@ public class Assembler {
         if (instruction.equals(Instruction.halt)) {
             return haltInstruction(line);
         }
+        if (instruction.equals(Instruction.call)) {
+            callInstruction(line);
+        }
+        if (instruction.equals(Instruction.ret)) {
+            retInstruction(line);
+        }
+        if (instruction.equals(Instruction.push)) {
+            pushInstruction(line);
+        }
+        if (instruction.equals(Instruction.pop)) {
+            popInstruction(line);
+        }
         return new int[0];
+    }
+
+    private static int[] pushInstruction(String line) {
+        String reg = extractArgumentString(line, 0);
+        int[] out = {0, 0};
+        out[0] = simpleInstruction("store " + reg + ", RSP, 0");
+        out[1] = simpleInstruction("add RSP, RSP, 1");
+        return out;
+    }
+
+    private static int[] popInstruction(String line) {
+        String reg = extractArgumentString(line, 0);
+        int[] out = {0, 0};
+        out[0] = simpleInstruction("load RSP, " + reg + ", 0");
+        out[1] = simpleInstruction("sub RSP, RSP, 1");
+        return out;
+    }
+
+    private static int[] callInstruction(String line) {
+        int[] out = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int address = index + out.length;
+        out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
+        out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[2] = simpleInstruction("store RSP, R29, 0");
+        out[3] = simpleInstruction("add RSP, RSP, R1");
+        out[4] = simpleInstruction("store RSP, RBP, 0");
+        out[5] = simpleInstruction("add RBP, RSP, R0");
+        out[6] = simpleInstruction("add RSP, RSP, R1");
+        String label = extractArgumentString(line, 0);
+        index += 7;
+        int[] jli = jumpLabelInstruction("jl " + label);
+        index -= 7;
+        out[7] = jli[0];
+        out[8] = jli[1];
+        out[9] = jli[2];
+        return out;
+    }
+
+    private static int[] retInstruction(String line) {
+        int[] out = {0, 0, 0, 0};
+        out[0] = simpleInstruction("sub RSP, RBP, 1");
+        out[1] = simpleInstruction("load RBP, RBP, 0");
+        out[2] = simpleInstruction("load RSP, R29, 0");
+        out[3] = simpleInstruction("jr R29");
+        return out;
     }
 
     private static int[] haltInstruction(String line) {
         int[] out = {0, 0, 0};
-        int address = index;
+        int address = index + 2;
         out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
         out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
         out[2] = simpleInstruction("jr R0,R29,0");
