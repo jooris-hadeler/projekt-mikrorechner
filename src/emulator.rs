@@ -60,10 +60,13 @@ pub struct Emulator {
 
 impl Emulator {
     pub fn new(rom: Vec<u32>, ram_size: u32, entry: u32) -> Self {
+        let mut registers = [0; 32];
+        registers[1] = 1;
+
         Self {
             ram: vec![0; ram_size as usize * 4],
             rom,
-            registers: [0; 32],
+            registers,
             should_halt: false,
             state: (entry, None, None, None, None),
         }
@@ -71,6 +74,24 @@ impl Emulator {
 
     pub const fn should_halt(&self) -> bool {
         self.should_halt
+    }
+
+    pub fn print_instructions(&self) {
+        let current_pc = self.state.0;
+
+        for (index, name) in [" IF", " ID", " EX", "MEM", " WB"].iter().enumerate() {
+            match current_pc.checked_sub(index as u32) {
+                Some(address) => {
+                    println!(
+                        "{}[{:08x}]: {}",
+                        name,
+                        address,
+                        Instruction(self.load_rom_word(address))
+                    )
+                }
+                None => println!("{}[OOB]: empty", name),
+            }
+        }
     }
 
     pub fn tick(&mut self) {
@@ -387,10 +408,10 @@ fn store_word(slice: &mut [u32], addr: u32, value: u32) {
     }
 }
 
-fn convert_imm26(imm26: u32) -> i32 {
+pub fn convert_imm26(imm26: u32) -> i32 {
     ((imm26 << 6) as i32) >> 6
 }
 
-fn convert_imm16(imm16: u32) -> i32 {
+pub fn convert_imm16(imm16: u32) -> i32 {
     imm16 as u16 as i16 as i32
 }

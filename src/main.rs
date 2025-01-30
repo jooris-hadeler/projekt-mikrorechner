@@ -1,4 +1,8 @@
-use std::{fs, process::exit};
+use std::{
+    fs,
+    io::{stdin, stdout, Write},
+    process::exit,
+};
 
 use clap::Parser;
 use cli::Cli;
@@ -7,6 +11,7 @@ use isa::*;
 use log::LevelFilter;
 use yansi::Paint;
 
+mod asm;
 mod cli;
 mod emulator;
 mod isa;
@@ -19,7 +24,7 @@ fn main() {
         .with_level(if args.verbose {
             LevelFilter::Debug
         } else {
-            LevelFilter::Info
+            LevelFilter::Warn
         })
         .without_timestamps()
         .init()
@@ -34,7 +39,14 @@ fn main() {
 
     let mut emulator = Emulator::new(rom_converted, args.ram_size, args.entry);
     while !emulator.should_halt() {
+        emulator.print_instructions();
         emulator.tick();
+
+        print!("cmd> ");
+
+        let mut buf = String::new();
+        stdout().flush().unwrap();
+        stdin().read_line(&mut buf).unwrap();
     }
 }
 

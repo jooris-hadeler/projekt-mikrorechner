@@ -16,7 +16,7 @@ bitfield! {
 pub mod register {
     #![allow(unused)]
     pub const REG_ZERO: u32 = 0;
-    pub const REG_1: u32 = 1;
+    pub const REG_ONE: u32 = 1;
     pub const REG_2: u32 = 2;
     pub const REG_3: u32 = 3;
     pub const REG_4: u32 = 4;

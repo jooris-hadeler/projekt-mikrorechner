@@ -29,4 +29,5 @@ pad()
 halt()                             # halt
 pad(amount=50)
 
-save_program("fib.bin")
+print_program()
+# save_program("fib.bin")
