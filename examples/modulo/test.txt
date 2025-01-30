@@ -1,0 +1,11 @@
+; does R1 = R2 % R3
+; uses R4 for intermediate results
+; uses R5 as return address
+modulo:
+    gtu R4, R3, R2 ;branch if R3 bigger than R2, R2 is the result
+    br R4, R0, 2
+    sub R2, R2, R3
+    jl modulo
+
+    jl modulo_finish
+modulo_finish:

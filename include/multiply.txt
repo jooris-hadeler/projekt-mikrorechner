@@ -1,0 +1,6 @@
+; calculates R1 * R2 and stores it in R1 for integers R1, R2
+; uses R1, R2, R3
+multiply:
+    llo R0, R3, 1
+    add R1, R1, R2
+    sub R2, R2, R3

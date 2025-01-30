@@ -1,0 +1,17 @@
+    llo ,R1,1
+start:
+    add R1,R1,R1
+    jl skipped
+    add R2,R1,R1
+skipped:
+    add R3,R1,R1
+    llo ,R6,1
+    bl R6, tbl1
+    add R7,R1,R1
+tbl1:
+    bl R0, tbl2
+    add R8,R1,R1
+tbl2:
+    add R9,R1,R1
+
+
