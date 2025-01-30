@@ -2,7 +2,6 @@ package assembler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public enum Instruction {
 
@@ -45,6 +44,7 @@ public enum Instruction {
     halt(Type.UNDEFINED, 21),
 
     jl(Type.MACRO, -1),
+    bl(Type.MACRO, -1),
     noop(Type.MACRO, 63, 0),
     nop(Type.MACRO, 63, 0);
 
@@ -87,8 +87,15 @@ public enum Instruction {
         return Util.mostSimilarByString(str, instructions);
     }
 
-    public static String valueOf(int value) {
+    public static String valueOfOpcode(int value) {
         return Arrays.stream(Instruction.values()).filter(e -> e.opcode == value).findFirst().get().toString();
     }
 
+    public static String valueOfFunct(int value) {
+        return Arrays.stream(Instruction.values())
+                     .filter(e -> e.funct == value && e.opcode == 0)
+                     .findFirst()
+                     .get()
+                     .toString();
+    }
 }

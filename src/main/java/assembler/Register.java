@@ -50,7 +50,10 @@ public enum Register {
     public static Register getValue(String s) {
         s = s.trim();
         if (s.startsWith("$")) {
-            s = s.substring(1);
+            s = "R" + s.substring(1);
+        }
+        if (!s.startsWith("R")) {
+            s = "R" + s;
         }
         if (s.equalsIgnoreCase("RSP") || s.equals("30")) {
             return RegisterStackPointer;

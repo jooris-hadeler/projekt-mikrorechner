@@ -41,9 +41,9 @@ public class Assembler {
             }
             postprocess();
         } catch (RuntimeException e) {
-            System.err.println("Exception in line " + index + ": ");
-            System.err.println(line);
-            System.err.println(e.getMessage());
+            System.out.println("Exception in line " + index + ": ");
+            System.out.println(line);
+            System.out.println(e.getMessage());
             System.exit(1);
         }
 
@@ -96,7 +96,6 @@ public class Assembler {
 
     private static void labelInstruction(String line) {
         saveKnownLabel(line.substring(0, line.length() - 1));
-        index++;
     }
 
     private static int simpleInstruction(String line) {
@@ -159,7 +158,26 @@ public class Assembler {
         if (instruction.equals(Instruction.noop) || instruction.equals(Instruction.nop)) {
             return noopInstruction(line);
         }
+        if (instruction.equals(Instruction.bl)) {
+            System.out.println("doing bl");
+            return branchLabelInstrcution(line);
+        }
         return new int[0];
+    }
+
+    private static int[] branchLabelInstrcution(String line) {
+        int[] out = {0, 0, 0, 0, 0};
+        String condReg = extractArgumentString(line, 0);
+        String label = extractArgumentString(line, 1);
+        index += 2;
+        int[] jli = jumpLabelInstruction("jl " + label);
+        index -= 2;
+        out[0] = simpleInstruction("br " + condReg + ", R0, " + 1);
+        out[1] = simpleInstruction("jmp " + 3);
+        out[2] = jli[0];
+        out[3] = jli[1];
+        out[4] = jli[2];
+        return out;
     }
 
     private static int[] noopInstruction(String line) {
@@ -174,7 +192,7 @@ public class Assembler {
             saveUnknownLabel(label);
             return out;
         }
-        int address = labels.get(extractArgumentString(line, 0));
+        int address = labels.get(label);
         out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
         out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
         out[2] = simpleInstruction("jr R0,R29,0");
@@ -185,7 +203,7 @@ public class Assembler {
         if (labels.containsKey(label)) {
             throw new RuntimeException("Label already exists in another line");
         }
-        labels.put(label, bytesPerInstruction * index);
+        labels.put(label, index);
     }
 
     private static void saveUnknownLabel(String label) {
@@ -241,7 +259,11 @@ public class Assembler {
             String strip = tokens[argumentIndex].strip();
             return strip;
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Something went wrong while extracting argument index: " + argumentIndex);
+            throw new RuntimeException("Something went wrong while extracting argument index: "
+                                               + argumentIndex
+                                               + "\n"
+                                               + line
+                                               + "\n");
         }
     }
 
