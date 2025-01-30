@@ -154,6 +154,12 @@
         "meaning": "pc += addr << 2"
     },
     {
+        "opcode": 62,
+        "format": "J",
+        "mnemonic": "halt",
+        "meaning": ""
+    },
+    {
         "opcode": 63,
         "format": "?",
         "mnemonic": "nop",
