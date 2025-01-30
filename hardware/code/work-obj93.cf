@@ -1,0 +1,12 @@
+v 4
+file . "3_Execution/aluTest.vhd" "47d3c3f8b791b1f1d545bdec02610eb157d470d9" "20250130132934.304":
+  entity alutest at 1( 0) + 0 on 16;
+  architecture testbench of alutest at 13( 247) + 0 on 17;
+file . "3_Execution/alu_opcode.vhd" "2febd7bfe8b73dcf062243742cafe2f63c103539" "20250130132928.306":
+  package alu_opcode at 1( 0) + 0 on 13;
+file . "3_Execution/EX.vhd" "3fab2e36207c62c6945add069cd892665ba27d2f" "20250130132913.123":
+  entity ex at 1( 0) + 0 on 11;
+  architecture behaviour of ex at 15( 652) + 0 on 12;
+file . "3_Execution/alu.vhd" "fcb8ff5f818970339580d2163f2b7d2bbf17cea9" "20250130132931.732":
+  entity alu at 1( 0) + 0 on 14;
+  architecture behaviour of alu at 13( 270) + 0 on 15;

@@ -1,6 +1,10 @@
 library ieee; 
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.opcodes.all;
+use work.funct_codes.all;
+use work.alu_opcode.all;
+
 
 entity ID is 
     port (
@@ -27,9 +31,9 @@ architecture behaviour of ID
     end component;
 
     signal sel_alu_val, sel_reg_val : std_logic_vector(4 downto 0);
+    signal opcode, funct : STD_LOGIC_VECTOR(5 downto 0);
 
     begin
-
         registerbankI: registerbank	port map (
             clk => clk,
             dIn => signed(write_data),
@@ -42,9 +46,41 @@ architecture behaviour of ID
             
         id_seg_process : process (clk) is
             begin
+
             sel_alu_val <= instruction(27 downto 23);
             sel_reg_val <= instruction(22 downto 18);
             if rising_edge(clk) then
+                opcode <= instruction(31 downto 26);
+                case opcode is
+                when opc_r =>
+                    funct <= instruction(5 downto 0);
+                    case funct is
+                        when funct_add => alu_op <= alu_add;
+                        when funct_sub => alu_op <= alu_sub;
+                        when funct_and => alu_op <= alu_and;
+                        when funct_or => alu_op <= alu_or;
+                        when funct_xor => alu_op <= alu_xor;
+                        when funct_shl => alu_op <= alu_lsl;
+                        when funct_sal => alu_op <= alu_lsl;
+                        when funct_shr => alu_op <= alu_lsr;
+                        when funct_sar => alu_op <= alu_asr;
+                        when funct_not => alu_op <= alu_not;
+                        when funct_lts => alu_op <= alu_cmplt;
+                        when funct_gts => alu_op <= alu_cmpgt;
+                        when funct_ltu => alu_op <= alu_cmplt_u;
+                        when funct_gtu => alu_op <= alu_cmpgt_u;
+                        when funct_eq => alu_op <= alu_cmpe;
+                        when funct_ne => alu_op <= alu_cmpne;
+                    end case;
+                when opc_shi => alu_op <= alu_add;
+                when opc_slo => alu_op <= alu_add;
+                when opc_load => alu_op <= alu_add;
+                when opc_store => alu_op <= alu_add;
+                when opc_br => alu_op <= alu_add;
+                when opc_jr => alu_op <= alu_add;
+                when opc_jmp => alu_op <= alu_add;
+                when opc_noop => alu_op <= alu_add;
+                end case;
                 pc_out  <= pc_in;
                 rd <= instruction(22 downto 18);
                 rt <= instruction(17 downto 13);

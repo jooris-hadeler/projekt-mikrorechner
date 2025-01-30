@@ -15,11 +15,11 @@ architecture testbench of aluTest is
     component alu is
         port( opA, opB: in signed(31 downto 0);
          result: out  signed(31 downto 0);
-		 op: in signed(4 downto 0));
+		 op: in STD_LOGIC_VECTOR(4 downto 0));
     end component alu;   
 
     signal opA, opB, result	: signed(31 downto 0);
-    signal op		: signed(4 downto 0);
+    signal op		: STD_LOGIC_VECTOR(4 downto 0);
 
     
 begin

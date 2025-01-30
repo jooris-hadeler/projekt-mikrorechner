@@ -7,7 +7,7 @@ use work.alu_opcode.all;
 entity alu is
    port( opA, opB: in signed(31 downto 0);
          result: out  signed(31 downto 0);
-		 op: in signed(4 downto 0));
+		 op: in STD_LOGIC_VECTOR(4 downto 0));
 end entity alu;
 
 architecture behaviour of alu is
