@@ -40,16 +40,7 @@ nop()
 nop()
 nop()
 
-addr = current_pc()
-nop()
-nop()
-nop()
-nop()
-nop()
-nop()
-
-print("jump at", hex(current_pc()))
-relative_jump(addr - 1, current_pc())
+halt()
 
 for _ in range(32):
     nop()

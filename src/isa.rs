@@ -59,6 +59,7 @@ pub mod opcode {
     pub const OP_BRANCH: u32 = 0x5;
     pub const OP_JUMP_REGISTER: u32 = 0x6;
     pub const OP_JUMP: u32 = 0x7;
+    pub const OP_HALT: u32 = 0x3E;
     pub const OP_NO_OP: u32 = 0x3F;
 
     pub const fn uses_format_r(op: u32) -> bool {

@@ -1,4 +1,4 @@
-use std::{fs, io::stdin, process::exit};
+use std::{fs, process::exit};
 
 use clap::Parser;
 use cli::Cli;
@@ -35,9 +35,6 @@ fn main() {
     let mut emulator = Emulator::new(rom_converted, args.ram_size, args.entry);
     while !emulator.should_halt() {
         emulator.tick();
-
-        // let mut buf = String::new();
-        // stdin().read_line(&mut buf).expect("failed to read input");
     }
 }
 

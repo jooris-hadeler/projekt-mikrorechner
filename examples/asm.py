@@ -8,6 +8,7 @@ OP_STORE = 0x4
 OP_BRANCH = 0x5
 OP_JUMP_REGISTER = 0x6
 OP_JUMP = 0x7
+OP_HALT = 0x3E
 OP_NO_OP = 0x3F
 
 REG_ZERO = 0
@@ -171,6 +172,9 @@ def branch(cond: int, addr: int):
 
 def nop():
     _j(OP_NO_OP, 0)
+
+def halt():
+    _j(OP_HALT, 0)
 
 def print_program():
     for instr in buffer:

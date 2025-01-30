@@ -254,6 +254,13 @@ impl Emulator {
                 dest: 0,
                 next_program_counter: operand1,
             }),
+            opcode::OP_HALT => Some(MemoryParams {
+                op,
+                value: 0,
+                addr: 0,
+                dest,
+                next_program_counter,
+            }),
             opcode::OP_NO_OP => None,
 
             _ => unimplemented!("{op} is not a valid opcode"),
@@ -309,6 +316,10 @@ impl Emulator {
                 } else {
                     (None, None)
                 }
+            }
+            opcode::OP_HALT => {
+                self.should_halt = true;
+                (None, None)
             }
             opcode::OP_NO_OP => (None, None),
 
