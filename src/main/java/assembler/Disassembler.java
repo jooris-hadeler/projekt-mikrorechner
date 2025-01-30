@@ -1,13 +1,10 @@
 package assembler;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Disassembler {
 
@@ -36,11 +33,21 @@ public class Disassembler {
     }
 
     private static void singleInstruction(int instruction) {
-        lines.add(Instruction.valueOf(getOpcode(instruction)));
+        int opcode = getOpcode(instruction);
+        if (opcode == 0) {
+            int funct = getFunct(instruction);
+            lines.add(Instruction.valueOfFunct(funct));
+        } else {
+            lines.add(Instruction.valueOfOpcode(opcode));
+        }
     }
 
     private static int getOpcode(int line) {
         return line >>> (Assembler.bitsPerInstruction - Assembler.bitsOpcode);
+    }
+
+    private static int getFunct(int line) {
+        return line & ((1 << Assembler.bitsFunct) - 1);
     }
 
 }
