@@ -1,0 +1,37 @@
+# Instructions
+- [x] Arithmetic
+  - [x] add
+  - [x] sub
+  - [x] and
+  - [x] or
+  - [x] xor
+  - [x] shl
+  - [x] sal
+  - [x] shr
+  - [x] sar
+  - [x] not
+  - [x] lts
+  - [x] gts
+  - [x] ltu
+  - [x] gtu
+  - [x] eq
+  - [x] ne
+- [x] Set High
+- [x] Set Low
+- [x] Load
+- [x] Store
+- [x] Branch
+- [x] Jump Register
+- [x] Jump
+- [x] Halt
+- [x] Nop
+
+# Macros
+- [ ] Return
+  - Decrement Stack Pointer, Load Return Address, Jump
+- [ ] Call
+  - Increment Stack Pointer, Store Return Address, Load Call Address, Jump
+- [ ] Halt 
+  - Jump Relative -1
+- [ ] Load Const
+  - Zero Register, Load Low Value
