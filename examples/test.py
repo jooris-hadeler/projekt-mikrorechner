@@ -9,7 +9,7 @@ nop()
 nop()
 nop()
 
-set_low(REG_1, 1)
+set_low(REG_2, 1)
 set_low(REG_3, 1024)
 nop()
 nop()
@@ -18,27 +18,42 @@ nop()
 nop()
 
 loop = current_pc()
-add( REG_1, REG_1, REG_2)
+add(REG_1, REG_1, REG_2)
 nop()
 nop()
 nop()
 nop()
 nop()
 
-ltu( REG_4, REG_1, REG_3)
+ltu(REG_4, REG_1, REG_3)
 nop()
 nop()
 nop()
 nop()
 nop()
 
-branch (REG_4, twos_comp(loop - current_pc(), 2))
+branch (REG_4, twos_comp(loop - current_pc() - 1, 2))
+
+nop()
+nop()
+nop()
+nop()
+nop()
 
 addr = current_pc()
-jump(addr)
+nop()
+nop()
+nop()
+nop()
+nop()
+nop()
 
-while current_pc() < 40:
+print("jump at", hex(current_pc()))
+relative_jump(addr - 1, current_pc())
+
+for _ in range(32):
     nop()
 
-print_program()
-save_program("rom-test.bin")
+
+# print_program()
+save_program("test.bin")

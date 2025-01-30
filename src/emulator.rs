@@ -44,8 +44,8 @@ struct WriteBackParams {
 }
 
 pub struct Emulator {
-    ram: Vec<u8>,
-    rom: Vec<u8>,
+    ram: Vec<u32>,
+    rom: Vec<u32>,
     registers: [u32; 32],
     should_halt: bool,
 
@@ -59,7 +59,7 @@ pub struct Emulator {
 }
 
 impl Emulator {
-    pub fn new(rom: Vec<u8>, ram_size: u32, entry: u32) -> Self {
+    pub fn new(rom: Vec<u32>, ram_size: u32, entry: u32) -> Self {
         Self {
             ram: vec![0; ram_size as usize * 4],
             rom,
@@ -76,9 +76,13 @@ impl Emulator {
     pub fn tick(&mut self) {
         debug!("Tick: {:?}", self.state);
 
-        let (fetch_input, decode_input, execute_input, memory_input, writeback_input) = self.state;
+        let (program_counter, decode_input, execute_input, memory_input, writeback_input) =
+            self.state;
 
-        let (new_decode_input, next_program_counter) = self.fetch(fetch_input);
+        info!("Current PC: {:x}", program_counter);
+        info!("Registers: {:?}", self.registers);
+
+        let (new_decode_input, next_program_counter) = self.fetch(program_counter);
         let new_execute_input = self.decode(decode_input);
         let new_memory_input = self.execute(execute_input);
         let (new_write_back_input, branched_program_counter) = self.memory(memory_input);
@@ -118,8 +122,9 @@ impl Emulator {
 
         let op = instruction.get_op();
 
-        info!(
-            "decoded op={}, rs={}, rt={}, rd={}, funct={}, imm={}, addr={}",
+        debug!(
+            "decoded at {:x} op={}, rs={}, rt={}, rd={}, funct={}, imm={}, addr={}",
+            next_program_counter.saturating_sub(1),
             op,
             instruction.get_rs(),
             instruction.get_rt(),
@@ -146,7 +151,7 @@ impl Emulator {
                 operand1: 0,
                 operand2: 0,
                 dest: 0,
-                imm_funct: instruction.get_funct(),
+                imm_funct: instruction.get_imm26(),
                 next_program_counter,
             }),
 
@@ -235,7 +240,7 @@ impl Emulator {
                 dest,
                 next_program_counter,
             }),
-            opcode::OP_BRANCH => Some(MemoryParams {
+            opcode::OP_BRANCH | opcode::OP_JUMP => Some(MemoryParams {
                 op,
                 value: operand1,
                 addr: imm_funct,
@@ -249,16 +254,9 @@ impl Emulator {
                 dest: 0,
                 next_program_counter: operand1,
             }),
-            opcode::OP_JUMP => Some(MemoryParams {
-                op,
-                value: 0,
-                dest: 0,
-                addr: 0,
-                next_program_counter: next_program_counter.wrapping_add_signed(imm_funct as i32),
-            }),
             opcode::OP_NO_OP => None,
 
-            _ => unimplemented!("opcode is not implemented"),
+            _ => unimplemented!("{op} is not a valid opcode"),
         }
     }
 
@@ -275,6 +273,13 @@ impl Emulator {
         };
 
         match op {
+            opcode::OP_ARITHMETIC | opcode::OP_SET_HIGH | opcode::OP_SET_LOW => (
+                Some(WriteBackParams {
+                    register: dest,
+                    value,
+                }),
+                None,
+            ),
             opcode::OP_LOAD => (
                 Some(WriteBackParams {
                     register: dest,
@@ -286,24 +291,28 @@ impl Emulator {
                 self.store_ram_word(addr, value);
                 (None, None)
             }
-            opcode::OP_ARITHMETIC | opcode::OP_SET_HIGH | opcode::OP_SET_LOW => (
-                Some(WriteBackParams {
-                    register: dest,
-                    value,
-                }),
-                None,
-            ),
-            opcode::OP_JUMP | opcode::OP_JUMP_REGISTER => (None, Some(next_program_counter)),
+            opcode::OP_JUMP => {
+                let offset = (addr as i64 - 2i64.pow(25)) as i32;
+                let new_pc = next_program_counter.wrapping_add_signed(offset);
+                info!("jumping by {offset} to {new_pc:x}");
+                (None, Some(new_pc))
+            }
+            opcode::OP_JUMP_REGISTER => (None, Some(next_program_counter)),
             opcode::OP_BRANCH => {
                 if value != 0 {
                     let offset = addr as u16 as i16 as i32;
+                    debug!(
+                        "branched npc = {:x}",
+                        next_program_counter.wrapping_add_signed(offset)
+                    );
                     (None, Some(next_program_counter.wrapping_add_signed(offset)))
                 } else {
                     (None, None)
                 }
             }
+            opcode::OP_NO_OP => (None, None),
 
-            _ => (None, None),
+            _ => unimplemented!("{op} is not a valid opcode"),
         }
     }
 
@@ -341,27 +350,28 @@ impl Emulator {
     }
 }
 
-fn load_word(slice: &[u8], addr: u32) -> u32 {
-    let addr = (addr as usize) << 2;
-    let bytes = slice
-        .get(addr..addr + 4)
-        .expect("tried reading out of bounds");
+fn load_word(slice: &[u32], addr: u32) -> u32 {
+    let addr = addr as usize;
 
-    u32::from_be_bytes(
-        bytes
-            .try_into()
-            .expect("failed to convert from byte slice to byte array"),
-    )
+    match slice.get(addr) {
+        Some(&word) => word,
+        None => panic!(
+            "tried reading word at 0x{:x}, which is out of bounds for memory of size 0x{:x}",
+            addr,
+            slice.len()
+        ),
+    }
 }
 
-fn store_word(slice: &mut [u8], addr: u32, value: u32) {
-    let bytes = value.to_be_bytes();
-    let addr = (addr as usize) << 2;
+fn store_word(slice: &mut [u32], addr: u32, value: u32) {
+    let addr = addr as usize;
 
-    let subslice: &mut [u8; 4] = slice
-        .get_mut(addr..addr + 4)
-        .expect("tried writing out of bounds")
-        .try_into()
-        .expect("failed to convert from byte slice to byte array");
-    *subslice = bytes;
+    match slice.get_mut(addr) {
+        Some(word) => *word = value,
+        None => panic!(
+            "tried writing word at 0x{:x}, which is out of bounds for memory of size 0x{:x}",
+            addr,
+            slice.len()
+        ),
+    }
 }

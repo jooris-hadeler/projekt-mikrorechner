@@ -71,9 +71,13 @@ def twos_comp(val: int, length=2) -> int:
     return int.from_bytes(byte_data, byteorder=sys.byteorder, signed=False)
 
 
+def relative_jump(dst: int, current: int):
+    jump(2**25 + dst - current)
+
+
 def current_pc() -> int:
     global buffer
-    return len(buffer)
+    return len(buffer) - 1
 
 
 def _r(funct: int, d: int, s: int, t: int):
@@ -151,10 +155,10 @@ def ne(dst: int, op1: int, op2: int):
     _r(FUNC_NE, dst, op1, op2)
 
 def set_high(dst: int, imm: int):
-    _i(OP_SET_HIGH, dst, REG_ZERO, imm)
+    _i(OP_SET_HIGH, REG_ZERO, dst, imm)
 
 def set_low(dst: int, imm: int):
-    _i(OP_SET_LOW, dst, REG_ZERO, imm)
+    _i(OP_SET_LOW, REG_ZERO, dst, imm)
 
 def jump_register(reg: int):
     _i(OP_JUMP_REGISTER, reg, reg, 0)

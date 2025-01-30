@@ -1,4 +1,4 @@
-use std::{fs, process::exit};
+use std::{fs, io::stdin, process::exit};
 
 use clap::Parser;
 use cli::Cli;
@@ -30,8 +30,28 @@ fn main() {
         exit(-1);
     };
 
-    let mut emulator = Emulator::new(rom, args.ram_size, args.entry);
+    let rom_converted = convert_to_word_vec(rom);
+
+    let mut emulator = Emulator::new(rom_converted, args.ram_size, args.entry);
     while !emulator.should_halt() {
         emulator.tick();
+
+        // let mut buf = String::new();
+        // stdin().read_line(&mut buf).expect("failed to read input");
     }
+}
+
+fn convert_to_word_vec(vec: Vec<u8>) -> Vec<u32> {
+    let mut result = Vec::new();
+
+    for i in (0..vec.len()).step_by(4) {
+        result.push(u32::from_be_bytes([
+            vec[i],
+            vec[i + 1],
+            vec[i + 2],
+            vec[i + 3],
+        ]));
+    }
+
+    result
 }
