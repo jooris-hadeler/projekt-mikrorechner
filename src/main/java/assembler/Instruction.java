@@ -41,8 +41,8 @@ public enum Instruction {
     callr(Type.I, 18),
     ret(Type.UNDEFINED, 19),
     trap(Type.UNDEFINED, 20),
-    halt(Type.UNDEFINED, 21),
 
+    halt(Type.MACRO, -1),
     jl(Type.MACRO, -1),
     bl(Type.MACRO, -1),
     noop(Type.MACRO, 63, 0),

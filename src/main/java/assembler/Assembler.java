@@ -159,10 +159,21 @@ public class Assembler {
             return noopInstruction(line);
         }
         if (instruction.equals(Instruction.bl)) {
-            System.out.println("doing bl");
             return branchLabelInstrcution(line);
         }
+        if (instruction.equals(Instruction.halt)) {
+            return haltInstruction(line);
+        }
         return new int[0];
+    }
+
+    private static int[] haltInstruction(String line) {
+        int[] out = {0, 0, 0};
+        int address = index;
+        out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
+        out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[2] = simpleInstruction("jr R0,R29,0");
+        return out;
     }
 
     private static int[] branchLabelInstrcution(String line) {
