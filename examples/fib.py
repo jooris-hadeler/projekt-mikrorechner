@@ -14,7 +14,7 @@ cond = REG_7
 set_low(index, 1)                  # index = 0
 set_low(a, 0)                      # a = 0
 set_low(b, 1)                      # b = 1
-set_low(limit, 40)                 # LIMIT = 40
+set_low(limit, 47)                 # LIMIT = 47
 pad()
 
 loop = current_pc()                # loop:

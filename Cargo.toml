@@ -5,8 +5,6 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.26", features = ["derive"] }
-simple_logger = "5.0.0"
 itertools = "0.14.0"
 bitfield = "0.17.0"
 yansi = "1.0.1"
-log = "0.4.25"

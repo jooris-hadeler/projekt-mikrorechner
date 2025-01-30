@@ -1,7 +1,13 @@
-use itertools::Itertools;
-use log::{debug, info};
+use std::collections::HashSet;
 
-use crate::{asm::REGISTER_NAMES, function, opcode, Instruction};
+use itertools::Itertools;
+
+use crate::{
+    asm::REGISTER_NAMES,
+    function,
+    isa::register::{REG_ONE, REG_STACK_POINTER},
+    opcode, Instruction,
+};
 
 macro_rules! int_to_bool {
     ($cond:expr) => {
@@ -49,6 +55,8 @@ pub struct Emulator {
     rom: Vec<u32>,
     registers: [u32; 32],
     should_halt: bool,
+    stage_instructions: [Option<(u32, Instruction)>; 5],
+    breakpoints: HashSet<u32>,
 
     state: (
         u32,
@@ -62,7 +70,8 @@ pub struct Emulator {
 impl Emulator {
     pub fn new(rom: Vec<u32>, ram_size: u32, entry: u32) -> Self {
         let mut registers = [0; 32];
-        registers[1] = 1;
+        registers[REG_ONE as usize] = 1;
+        registers[REG_STACK_POINTER as usize] = ram_size - 1;
 
         Self {
             ram: vec![0; ram_size as usize * 4],
@@ -70,7 +79,21 @@ impl Emulator {
             registers,
             should_halt: false,
             state: (entry, None, None, None, None),
+            stage_instructions: [None; 5],
+            breakpoints: HashSet::new(),
         }
+    }
+
+    pub fn add_breakpoint(&mut self, addr: u32) {
+        self.breakpoints.insert(addr);
+    }
+
+    pub fn remove_breakpoint(&mut self, addr: u32) {
+        self.breakpoints.remove(&addr);
+    }
+
+    pub fn has_reached_break_point(&self) -> bool {
+        self.stage_instructions[0].is_some_and(|(addr, _)| self.breakpoints.contains(&addr))
     }
 
     pub const fn should_halt(&self) -> bool {
@@ -78,21 +101,17 @@ impl Emulator {
     }
 
     pub fn print_instructions(&self) {
-        let current_pc = self.state.0;
-
         println!();
-        for (index, name) in [" IF", " ID", " EX", "MEM", " WB"].iter().enumerate().rev() {
-            match current_pc.checked_sub(index as u32) {
-                Some(address) => {
-                    println!(
-                        "{} => 0x{:08x}: {}",
-                        name,
-                        address,
-                        Instruction(self.load_rom_word(address))
-                    );
-                }
-                None => (),
-            }
+        for (name, stage) in [" IF", " ID", " EX", "MEM", " WB"]
+            .iter()
+            .zip(self.stage_instructions.iter())
+            .rev()
+        {
+            let Some((addr, instr)) = stage else {
+                continue;
+            };
+
+            println!("{} => 0x{:08x}: {}", name, addr, instr);
         }
         println!();
     }
@@ -109,13 +128,8 @@ impl Emulator {
     }
 
     pub fn tick(&mut self) {
-        debug!("Tick: {:?}", self.state);
-
         let (program_counter, decode_input, execute_input, memory_input, writeback_input) =
             self.state;
-
-        info!("Current PC: {:x}", program_counter);
-        info!("Registers: {:?}", self.registers);
 
         let (new_decode_input, next_program_counter) = self.fetch(program_counter);
         let new_execute_input = self.decode(decode_input);
@@ -137,6 +151,9 @@ impl Emulator {
         let instruction = Instruction(self.load_rom_word(program_counter));
         let next_program_counter = program_counter + 1;
 
+        let [a, b, c, d, _] = self.stage_instructions;
+        self.stage_instructions = [Some((program_counter, instruction)), a, b, c, d];
+
         (
             Some(DecodeParams {
                 instruction,
@@ -156,18 +173,6 @@ impl Emulator {
         };
 
         let op = instruction.get_op();
-
-        debug!(
-            "decoded at {:x} op={}, rs={}, rt={}, rd={}, funct={}, imm={}, addr={}",
-            next_program_counter.saturating_sub(1),
-            op,
-            instruction.get_rs(),
-            instruction.get_rt(),
-            instruction.get_rd(),
-            instruction.get_funct(),
-            instruction.get_imm16(),
-            instruction.get_imm26()
-        );
 
         match op {
             // Instructions with R format
@@ -336,17 +341,12 @@ impl Emulator {
             opcode::OP_JUMP => {
                 let offset = convert_imm26(addr);
                 let new_pc = next_program_counter.wrapping_add_signed(offset);
-                info!("jumping by {offset} to {new_pc:x}");
                 (None, Some(new_pc))
             }
             opcode::OP_JUMP_REGISTER => (None, Some(next_program_counter)),
             opcode::OP_BRANCH => {
                 if value != 0 {
                     let offset = convert_imm16(addr);
-                    debug!(
-                        "branched npc = {:x}",
-                        next_program_counter.wrapping_add_signed(offset)
-                    );
                     (None, Some(next_program_counter.wrapping_add_signed(offset)))
                 } else {
                     (None, None)

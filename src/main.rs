@@ -8,7 +8,6 @@ use clap::Parser;
 use cli::Cli;
 use emulator::Emulator;
 use isa::*;
-use log::LevelFilter;
 use yansi::Paint;
 
 mod asm;
@@ -19,17 +18,6 @@ mod isa;
 fn main() {
     let args = Cli::parse();
 
-    simple_logger::SimpleLogger::new()
-        .with_colors(true)
-        .with_level(if args.verbose {
-            LevelFilter::Debug
-        } else {
-            LevelFilter::Warn
-        })
-        .without_timestamps()
-        .init()
-        .expect("failed to init logger");
-
     let Ok(rom) = fs::read(&args.file) else {
         eprintln!("{} failed to load rom image.", "error:".bright_red());
         exit(-1);
@@ -38,26 +26,89 @@ fn main() {
     let rom_converted = convert_to_word_vec(rom);
 
     let mut emulator = Emulator::new(rom_converted, args.ram_size, args.entry);
-    loop {
-        emulator.print_instructions();
 
-        print!("cmd > ");
-        stdout().flush().unwrap();
+    if args.interactive {
+        println!("Interactive mode type `help` for more information.");
 
-        let mut buf = String::new();
-        stdin().read_line(&mut buf).unwrap();
+        loop {
+            print!("cmd > ");
+            stdout().flush().unwrap();
 
-        match buf.trim() {
-            "step" | "s" => emulator.tick(),
-            "regs" | "r" => emulator.print_registers(),
-            "continue" | "c" => {
-                while !emulator.should_halt() {
-                    emulator.tick();
-                }
+            let mut buf = String::new();
+            stdin().read_line(&mut buf).unwrap();
+
+            let args: Vec<_> = buf.trim().split(" ").collect();
+            if args.is_empty() {
+                continue;
             }
-            "quit" | "q" => break,
-            _ => println!("invalid command: {}", buf),
+
+            match args[0] {
+                "help" => {
+                    println!("run      > Run the program until the program finished or we reached a break point.");
+                    println!(
+                        "continue > Continue execution until we halt or we reach a break point."
+                    );
+                    println!("addbp    > Add a breakpoint.");
+                    println!("rmbp     > Remove a breakpoint.");
+                    println!("step     > Cycle the emulator once.");
+                    println!("dump     > Dump the values of the registers.");
+                    println!("quit     > Quit the program.");
+                }
+                "run" => {
+                    while !emulator.should_halt() && !emulator.has_reached_break_point() {
+                        emulator.tick();
+                    }
+                }
+                "continue" => {
+                    emulator.tick();
+
+                    while !emulator.should_halt() && !emulator.has_reached_break_point() {
+                        emulator.tick();
+                    }
+
+                    emulator.print_instructions();
+                }
+                "addbp" => {
+                    if args.len() != 2 {
+                        println!("usage: addbp <addr>");
+                        continue;
+                    }
+
+                    let Ok(addr) = u32::from_str_radix(args[1], 16) else {
+                        println!("addr is not a valid hexadecimal number");
+                        continue;
+                    };
+
+                    emulator.add_breakpoint(addr);
+                }
+                "rmbp" => {
+                    if args.len() != 2 {
+                        println!("usage: rmbp <addr>");
+                        continue;
+                    }
+
+                    let Ok(addr) = u32::from_str_radix(args[1], 16) else {
+                        println!("addr is not a valid hexadecimal number");
+                        continue;
+                    };
+
+                    emulator.remove_breakpoint(addr);
+                }
+                "step" => {
+                    emulator.tick();
+                    emulator.print_instructions();
+                }
+                "dump" => emulator.print_registers(),
+                "quit" => break,
+                _ => println!("invalid command: {}", buf),
+            }
         }
+    } else {
+        while !emulator.should_halt() {
+            emulator.tick();
+        }
+
+        emulator.print_registers();
     }
 }
 
