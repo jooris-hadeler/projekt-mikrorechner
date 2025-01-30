@@ -12,7 +12,7 @@ entity ID is
         clk, reg_wE :                         in std_logic;
         write_reg :                      in std_logic_vector(4 downto 0);
         pc_out, alu_val, reg_val, imm :  out std_logic_vector(31 downto 0);
-        alu_op, rd, rt :                 out std_logic_vector(4 downto 0);
+        alu_op, rs, rd, rt :                 out std_logic_vector(4 downto 0);
         alu_src, reg_dest, mem_to_reg_EX, reg_write_EX :              out std_logic -- weitere kontrollsignale hinzufügen
     );
 end entity ID;
@@ -72,6 +72,9 @@ architecture behaviour of ID
                         when funct_eq => alu_op <= alu_cmpe;
                         when funct_ne => alu_op <= alu_cmpne;
                     end case;
+                    rs <= instruction(25 downto 21);
+                    rt <= instruction(20 downto 16);
+                    rd <= instruction(15 downto 11);
                 when opc_shi => alu_op <= alu_add;
                 when opc_slo => alu_op <= alu_add;
                 when opc_load => alu_op <= alu_add;
@@ -82,8 +85,6 @@ architecture behaviour of ID
                 when opc_noop => alu_op <= alu_add;
                 end case;
                 pc_out  <= pc_in;
-                rd <= instruction(22 downto 18);
-                rt <= instruction(17 downto 13);
 
                 if instruction(15) = '0' then -- implizites sign extend
                     imm <= "0000000000000000" & instruction(15 downto 0);
