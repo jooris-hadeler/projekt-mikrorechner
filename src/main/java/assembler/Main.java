@@ -50,10 +50,11 @@ public class Main {
             // parse the command line arguments
             CommandLine line = parser.parse(options, args);
             if (!line.hasOption("f")) {
-                formatter.printHelp("java -jar assembler.jar", options);
-                System.exit(1);
+                inputFile = new File("./main.txt");
+            } else {
+                inputFile = new File(line.getOptionValue(fileOption));
             }
-            inputFile = new File(line.getOptionValue(fileOption));
+
             if (!line.hasOption("o")) {
                 outputFile = new File("./default.out");
             } else {
