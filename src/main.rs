@@ -38,15 +38,26 @@ fn main() {
     let rom_converted = convert_to_word_vec(rom);
 
     let mut emulator = Emulator::new(rom_converted, args.ram_size, args.entry);
-    while !emulator.should_halt() {
+    loop {
         emulator.print_instructions();
-        emulator.tick();
 
-        print!("cmd> ");
+        print!("cmd > ");
+        stdout().flush().unwrap();
 
         let mut buf = String::new();
-        stdout().flush().unwrap();
         stdin().read_line(&mut buf).unwrap();
+
+        match buf.trim() {
+            "step" | "s" => emulator.tick(),
+            "regs" | "r" => emulator.print_registers(),
+            "continue" | "c" => {
+                while !emulator.should_halt() {
+                    emulator.tick();
+                }
+            }
+            "quit" | "q" => break,
+            _ => println!("invalid command: {}", buf),
+        }
     }
 }
 

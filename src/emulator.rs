@@ -1,6 +1,7 @@
+use itertools::Itertools;
 use log::{debug, info};
 
-use crate::{function, opcode, Instruction};
+use crate::{asm::REGISTER_NAMES, function, opcode, Instruction};
 
 macro_rules! int_to_bool {
     ($cond:expr) => {
@@ -79,18 +80,31 @@ impl Emulator {
     pub fn print_instructions(&self) {
         let current_pc = self.state.0;
 
-        for (index, name) in [" IF", " ID", " EX", "MEM", " WB"].iter().enumerate() {
+        println!();
+        for (index, name) in [" IF", " ID", " EX", "MEM", " WB"].iter().enumerate().rev() {
             match current_pc.checked_sub(index as u32) {
                 Some(address) => {
                     println!(
-                        "{}[{:08x}]: {}",
+                        "{} => 0x{:08x}: {}",
                         name,
                         address,
                         Instruction(self.load_rom_word(address))
-                    )
+                    );
                 }
-                None => println!("{}[OOB]: empty", name),
+                None => (),
             }
+        }
+        println!();
+    }
+
+    pub fn print_registers(&self) {
+        println!();
+        for chunk in &REGISTER_NAMES.iter().enumerate().chunks(4) {
+            for (index, name) in chunk {
+                print!("{:>5}: 0x{:08x}  ", name, self.registers[index]);
+            }
+
+            println!();
         }
     }
 
@@ -377,6 +391,7 @@ impl Emulator {
     fn store_register(&mut self, index: u32, value: u32) {
         assert!(index < 32, "tried writing to invalid register");
         assert_ne!(index, 0, "tried writing to REG_ZERO");
+        assert_ne!(index, 1, "tried writing to REG_ONE");
 
         self.registers[index as usize] = value;
     }

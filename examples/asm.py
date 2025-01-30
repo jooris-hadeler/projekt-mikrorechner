@@ -12,7 +12,7 @@ OP_HALT = 0x3E
 OP_NO_OP = 0x3F
 
 REG_ZERO = 0
-REG_1 = 1
+REG_ONE = 1
 REG_2 = 2
 REG_3 = 3
 REG_4 = 4
