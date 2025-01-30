@@ -67,13 +67,12 @@ FUNC_NE = 15
 buffer: list[int] = []
 
 
-def twos_comp(val: int, length=2) -> int:
-    byte_data = val.to_bytes(length, byteorder=sys.byteorder, signed=True) 
-    return int.from_bytes(byte_data, byteorder=sys.byteorder, signed=False)
-
-
-def relative_jump(dst: int, current: int):
-    jump(2**25 + dst - current)
+def twos_complement(number, bits=16):
+    # Handle negative numbers by adding 2^bits and applying a mask to fit the bit size
+    if number < 0:
+        return (number + (1 << bits)) & ((1 << bits) - 1)
+    # For non-negative numbers, just apply a mask to fit within the specified bit size
+    return number & ((1 << bits) - 1)
 
 
 def current_pc() -> int:
@@ -164,11 +163,11 @@ def set_low(dst: int, imm: int):
 def jump_register(reg: int):
     _i(OP_JUMP_REGISTER, reg, reg, 0)
 
-def jump(addr: int):
-    _j(OP_JUMP, addr)
+def jump(relative_offset: int):
+    _j(OP_JUMP, twos_complement(relative_offset - 1, bits=26))
 
-def branch(cond: int, addr: int):
-    _i(OP_BRANCH, cond, cond, addr)
+def branch(cond: int, relative_offset: int):
+    _i(OP_BRANCH, cond, cond, twos_complement(relative_offset - 1, bits=16))
 
 def nop():
     _j(OP_NO_OP, 0)

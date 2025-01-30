@@ -18,12 +18,13 @@
   - [x] ne
 - [x] Set High
 - [x] Set Low
-- [ ] Load
-- [ ] Store
-- [ ] Branch
-- [ ] Jump Register
-- [ ] Jump
-- [ ] Nop
+- [x] Load
+- [x] Store
+- [x] Branch
+- [x] Jump Register
+- [x] Jump
+- [x] Halt
+- [x] Nop
 
 # Macros
 - [ ] Return

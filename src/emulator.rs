@@ -299,7 +299,7 @@ impl Emulator {
                 (None, None)
             }
             opcode::OP_JUMP => {
-                let offset = (addr as i64 - 2i64.pow(25)) as i32;
+                let offset = convert_imm26(addr);
                 let new_pc = next_program_counter.wrapping_add_signed(offset);
                 info!("jumping by {offset} to {new_pc:x}");
                 (None, Some(new_pc))
@@ -307,7 +307,7 @@ impl Emulator {
             opcode::OP_JUMP_REGISTER => (None, Some(next_program_counter)),
             opcode::OP_BRANCH => {
                 if value != 0 {
-                    let offset = addr as u16 as i16 as i32;
+                    let offset = convert_imm16(addr);
                     debug!(
                         "branched npc = {:x}",
                         next_program_counter.wrapping_add_signed(offset)
@@ -385,4 +385,12 @@ fn store_word(slice: &mut [u32], addr: u32, value: u32) {
             slice.len()
         ),
     }
+}
+
+fn convert_imm26(imm26: u32) -> i32 {
+    ((imm26 << 6) as i32) >> 6
+}
+
+fn convert_imm16(imm16: u32) -> i32 {
+    imm16 as u16 as i16 as i32
 }
