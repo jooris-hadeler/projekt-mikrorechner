@@ -1,0 +1,13 @@
+[package]
+name = "emu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bitfield = "0.17.0"
+clap = { version = "4.5.26", features = ["derive"] }
+log = "0.4.25"
+modular-bitfield = "0.11.2"
+phf = { version = "0.11.3", features = ["macros", "phf_macros"] }
+simple_logger = "5.0.0"
+yansi = "1.0.1"
