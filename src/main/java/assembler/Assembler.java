@@ -190,8 +190,8 @@ public class Assembler {
     private static int[] popInstruction(String line) {
         String reg = extractArgumentString(line, 0);
         int[] out = {0, 0};
-        out[0] = simpleInstruction("load RSP, " + reg + ", 0");
-        out[1] = simpleInstruction("sub RSP, RSP, 1");
+        out[0] = simpleInstruction("sub RSP, RSP, 1");
+        out[1] = simpleInstruction("load RSP, " + reg + ", 0");
         return out;
     }
 
