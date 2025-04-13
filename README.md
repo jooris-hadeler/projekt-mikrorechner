@@ -113,7 +113,7 @@ Values for i bigger than 16 bits will be cut of.
     - Zero Register, Load Low Value
     - Wont do, use l32 instead with only low value
 - [x] l32 to load 32 bits in one macro instruction
-    - Syntax: l32 REG,123456789 (max 2147483647 signed) (prefix 0x for Hex, 0b for Binary e.g. 0b101 for 9 dec)
+    - Syntax: l32 REG,123456789 (max 2147483647 signed) (prefix 0x for Hex)
 - [x] lfloat to load the parameter as a float
     - calculations on floats will have to include something instead
     - REMEMBER TO USE DOT(.) INSTEAD OF COMMA(,)
