@@ -1,0 +1,4 @@
+Starting disassembler...
+Linecount: 26
+Disassembling complete, writing to file
+Writing to file completed

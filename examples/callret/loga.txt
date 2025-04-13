@@ -1,0 +1,31 @@
+Starting assembler...
+0: call func_main
+1: call func_main <extended>
+2: call func_main <extended>
+3: call func_main <extended>
+4: call func_main <extended>
+5: call func_main <extended>
+6: call func_main <extended>
+7: call func_main <extended>
+8: call func_main <extended>
+9: call func_main <extended>
+10: llo ,R2,10
+11: add R1,R2,R3
+12: ret
+13: ret <extended>
+14: ret <extended>
+15: ret <extended>
+16: call func_doSomething
+17: call func_doSomething <extended>
+18: call func_doSomething <extended>
+19: call func_doSomething <extended>
+20: call func_doSomething <extended>
+21: call func_doSomething <extended>
+22: call func_doSomething <extended>
+23: call func_doSomething <extended>
+24: call func_doSomething <extended>
+25: call func_doSomething <extended>
+Wordcount: 26
+Assembling complete, writing to file
+Wrote 104 bytes
+Writing to file completed

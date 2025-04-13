@@ -1,0 +1,8 @@
+call func_main
+func_doSomething:
+    llo ,R2,10
+    add R1,R2,R3
+    ret
+
+func_main:
+    call func_doSomething
