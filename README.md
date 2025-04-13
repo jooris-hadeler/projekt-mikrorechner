@@ -109,12 +109,15 @@ Values for i bigger than 16 bits will be cut of.
 - [x] Halt
     - Syntax: ``halt``
     - Will forever jump onto the same line where halt was
-- [ ] Load Const
+- [-] Load Const
     - Zero Register, Load Low Value
-- [ ] l32 to load 32 bits in one macro instruction
-- [ ] lfloat to load the parameter as a float
+    - Wont do, use l32 instead with only low value
+- [x] l32 to load 32 bits in one macro instruction
+    - Syntax: l32 REG,123456789 (max 2147483647 signed) (prefix 0x for Hex, 0b for Binary e.g. 0b101 for 9 dec)
+- [x] lfloat to load the parameter as a float
     - calculations on floats will have to include something instead
-- [ ] noop4 a macro for creating 4 consecutive noops
+    - REMEMBER TO USE DOT(.) INSTEAD OF COMMA(,)
+- [x] noop4 a macro for creating 4 consecutive noops
     - call it noooop?
     - or n88p?
 - [ ] macro to get the address of a label

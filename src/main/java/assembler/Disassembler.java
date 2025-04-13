@@ -16,15 +16,20 @@ public class Disassembler {
         lines = new ArrayList<>();
 
         byte[] line = new byte[Assembler.bytesPerInstruction];
+        int lineInt = 0;
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(input))) {
             while (bis.read(line) != -1) {
-                singleInstruction(Util.convert(line));
+                lineInt = Util.convert(line);
+                singleInstruction(lineInt);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
+            e.printStackTrace();
             System.err.println("Exception in line " + index + ": ");
-            System.err.println(line);
+            System.err.println("Integer: " + lineInt);
+            System.err.println("Hex: " + Integer.toHexString(lineInt));
+            System.err.println("Binary: " + Integer.toBinaryString(lineInt));
             System.err.println(e.getMessage());
             System.exit(1);
         }

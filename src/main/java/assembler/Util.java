@@ -41,7 +41,7 @@ public class Util {
         if (index != 0) {
             return instructions.get(index - 1);
         }
-        return "?";
+        return "No Similar Instruction Found.";
     }
 
     public static List<String> readLines(File f) {
@@ -61,6 +61,7 @@ public class Util {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Wrote " + bits.length + " bytes");
     }
 
     public static byte[] convert(int[] array) {

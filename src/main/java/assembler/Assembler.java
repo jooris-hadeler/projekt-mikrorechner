@@ -33,7 +33,7 @@ public class Assembler {
 
             for (int i = 0; i < lines.size(); i++) {
                 line = lines.get(i);
-                line = preprocess(line);
+                line = preprocessComments(line);
                 if (line.isBlank()) {
                     continue;
                 }
@@ -44,6 +44,7 @@ public class Assembler {
             System.out.println("Exception in line " + index + ": ");
             System.out.println(line);
             System.out.println(e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
 
@@ -70,8 +71,8 @@ public class Assembler {
     }
 
     private static void singleInstruction(String line) {
-        System.out.println(index + ": " + line);
         line = line.trim();
+
         if (line.endsWith(":")) {
             labelInstruction(line);
             return;
@@ -81,11 +82,17 @@ public class Assembler {
         if (instruction.getType() == Instruction.Type.R
                 || instruction.getType() == Instruction.Type.I
                 || instruction.getType() == Instruction.Type.J) {
+            System.out.println(index + ": " + line);
             assembledData.add(simpleInstruction(line));
             index++;
         } else if (instruction.getType() == Instruction.Type.MACRO) {
             int[] bits = macroInstruction(line);
             for (int i = 0; i < bits.length; i++) {
+                if(i == 0){
+                    System.out.println(index + ": " + line);
+                } else {
+                    System.out.println(index + ": " + line + " <extended>");
+                }
                 assembledData.add(bits[i]);
                 index++;
             }
@@ -158,6 +165,15 @@ public class Assembler {
         if (instruction.equals(Instruction.noop) || instruction.equals(Instruction.nop)) {
             return noopInstruction(line);
         }
+        if(instruction.equals((Instruction.noop4) )){
+            int[] temp = noopInstruction(line);
+            int[] ret = new int[temp.length * 4];
+            System.arraycopy(temp, 0, ret, 0, temp.length);
+            System.arraycopy(temp, 0, ret, temp.length, temp.length);
+            System.arraycopy(temp, 0, ret, temp.length * 2, temp.length);
+            System.arraycopy(temp, 0, ret, temp.length * 3, temp.length);
+            return ret;
+        }
         if (instruction.equals(Instruction.bl)) {
             return branchLabelInstrcution(line);
         }
@@ -165,18 +181,43 @@ public class Assembler {
             return haltInstruction(line);
         }
         if (instruction.equals(Instruction.call)) {
-            callInstruction(line);
+            return callInstruction(line);
         }
         if (instruction.equals(Instruction.ret)) {
-            retInstruction(line);
+            return retInstruction(line);
         }
         if (instruction.equals(Instruction.push)) {
-            pushInstruction(line);
+            return pushInstruction(line);
         }
         if (instruction.equals(Instruction.pop)) {
-            popInstruction(line);
+            return popInstruction(line);
+        }
+        if(instruction.equals(Instruction.l32)){
+            return l32Instruction(line);
+        }
+        if(instruction.equals(Instruction.lfloat)){
+            return lfloat32Instruction(line);
         }
         return new int[0];
+    }
+
+
+    private static int[] l32Instruction(String line) {
+        int[] out = {0, 0};
+        String val = extractArgumentString(line, 1);
+        String reg = extractArgumentString(line, 0);
+        int vali = (int) (Long.decode(val).longValue());
+        out[0] = simpleInstruction("lhi R0," + reg + "," + (vali >> 16 & 0xFFFF));
+        out[1] = simpleInstruction("llo R0," + reg + "," + (vali & 0xFFFF));
+        return out;
+    }
+
+    private static int[] lfloat32Instruction(String line) {
+        String val = extractArgumentString(line, 1);
+        String reg = extractArgumentString(line, 0);
+        float valf = Float.valueOf(val);
+        int vali = Float.floatToIntBits(valf);
+        return l32Instruction("l32, " + reg + ",0x" + Integer.toHexString(vali));
     }
 
     private static int[] pushInstruction(String line) {
@@ -198,8 +239,8 @@ public class Assembler {
     private static int[] callInstruction(String line) {
         int[] out = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         int address = index + out.length;
-        out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
-        out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[0] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[1] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
         out[2] = simpleInstruction("store RSP, R29, 0");
         out[3] = simpleInstruction("add RSP, RSP, R1");
         out[4] = simpleInstruction("store RSP, RBP, 0");
@@ -227,8 +268,8 @@ public class Assembler {
     private static int[] haltInstruction(String line) {
         int[] out = {0, 0, 0};
         int address = index + 2;
-        out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
-        out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[0] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[1] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
         out[2] = simpleInstruction("jr R0,R29,0");
         return out;
     }
@@ -261,8 +302,8 @@ public class Assembler {
             return out;
         }
         int address = labels.get(label);
-        out[0] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
-        out[1] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[0] = simpleInstruction("lhi R0,R29," + (address >> 16 & 0xFFFF));
+        out[1] = simpleInstruction("llo R0,R29," + (address & 0xFFFF));
         out[2] = simpleInstruction("jr R0,R29,0");
         return out;
     }
@@ -278,7 +319,7 @@ public class Assembler {
         jumpLabels.put(index, label);
     }
 
-    private static String preprocess(String line) {
+    private static String preprocessComments(String line) {
         if (line.contains(";")) {
             return line.split(";")[0];
         }
@@ -366,7 +407,7 @@ public class Assembler {
     }
 
     private static boolean isInclude(String line) {
-        if (line.startsWith("#include")) {
+        if (line.toLowerCase().startsWith("#include")) {
             return true;
         }
         return false;

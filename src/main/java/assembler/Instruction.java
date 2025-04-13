@@ -36,6 +36,9 @@ public enum Instruction {
     halt(Type.MACRO, -1),
     jl(Type.MACRO, -1),
     bl(Type.MACRO, -1),
+    l32(Type.MACRO, -1),
+    lfloat(Type.MACRO, -1),
+    noop4(Type.MACRO, -1),
     noop(Type.MACRO, 63, 0),
     nop(Type.MACRO, 63, 0);
 

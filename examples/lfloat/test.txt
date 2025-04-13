@@ -1,0 +1,12 @@
+lfloat R1,0.01
+lfloat R2,-0.01
+lfloat R2,-1.5
+lfloat R2,-3
+lfloat R2,-5.0e5
+lfloat R2,1.5e-5
+lfloat R2,0xFF3B.FFFp-30
+lfloat R2,Infinity
+lfloat R2,-Infinity
+lfloat R2,NaN
+
+
