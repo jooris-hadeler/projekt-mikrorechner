@@ -124,7 +124,7 @@ public class Assembler {
         int rd = parseRegister(extractArgumentString(line, 0)).getIndex();
         int rs = parseRegister(extractArgumentString(line, 1)).getIndex();
         int rt = parseRegister(extractArgumentString(line, 2)).getIndex();
-        int shamt = parseShamt(extractArgumentStringWithDefault(line, 3, "0"));
+        int shamt = parseShamt(extractArgumentString(line, 3, "0"));
         int funct = instruction.getFunct();
         int out = opcode << (bitsPerInstruction - bitsOpcode)
                 | rs << (bitsPerInstruction - bitsOpcode - bitsRegister)
@@ -138,9 +138,9 @@ public class Assembler {
     private static int iInstruction(String line) {
         Instruction instruction = parseInstruction(line);
         int opcode = instruction.getOpcode();
-        int rt = parseRegister(extractArgumentString(line, 0)).getIndex();
-        int rs = parseRegister(extractArgumentString(line, 1)).getIndex();
-        int i = parseImmediate(extractArgumentString(line, 2));
+        int rt = parseRegister(extractArgumentString(line, 0, "R0")).getIndex();
+        int rs = parseRegister(extractArgumentString(line, 1, "R0")).getIndex();
+        int i = parseImmediate(extractArgumentString(line, 2, "0"));
         int out = opcode << (bitsPerInstruction - bitsOpcode)
                 | rs << (bitsPerInstruction - bitsOpcode - bitsRegister)
                 | rt << (bitsPerInstruction - bitsOpcode - bitsRegister - bitsRegister)
@@ -376,7 +376,7 @@ public class Assembler {
         }
     }
 
-    private static String extractArgumentStringWithDefault(String line, int argumentIndex, String def) {
+    private static String extractArgumentString(String line, int argumentIndex, String def) {
         try {
             String[] tokens = line.split(" ")[1].split(",");
             String strip = tokens[argumentIndex].strip();
