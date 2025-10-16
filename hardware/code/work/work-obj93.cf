@@ -1,7 +1,0 @@
-v 4
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/hardware/code/" "3_Execution/alu_opcode.vhd" "2febd7bfe8b73dcf062243742cafe2f63c103539" "20250130153829.865":
-  package alu_opcode at 1( 0) + 0 on 15;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/hardware/code/" "2_Instruction_Decode/opcodes.vhd" "f38fdf9f5a64d889399862cecbf10db753921d3c" "20250130153414.422":
-  package opcodes at 1( 0) + 0 on 11;
-file "/home/christopher/Documents/Projekt/projekt-mikrorechner/hardware/code/" "2_Instruction_Decode/funct_codes.vhd" "88ac59d4d9082da150d4b879ac431e769bf310e5" "20250130153815.516":
-  package funct_codes at 1( 0) + 0 on 14;
