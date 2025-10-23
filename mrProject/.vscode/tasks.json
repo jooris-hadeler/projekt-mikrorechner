@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "GHDL: analyze",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/mr_Project",
+                "env": {
+                    "PATH": "/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin"
+                }
+            },
+            "command": "ghdl -a --std=08 instF.vhd && ghdl -a --std=08 instF_tb.vhd"
+        },
+        {
+            "label": "GHDL: elaborate",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/mr_Project"
+            },
+            "command": "ghdl -e --std=08 instF_tb",
+            "dependsOn": "GHDL: analyze"
+        },
+        {
+            "label": "GHDL: run (wave)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/mr_Project"
+            },
+            "command": "ghdl -r --std=08 instF_tb --stop-time=1ms --wave=instF.ghw",
+            "dependsOn": "GHDL: elaborate"
+        },
+        {
+            "label": "GTKWave: open",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/mr_Project"
+            },
+            "command": "gtkwave instF.ghw"
+        }
+    ]
+}

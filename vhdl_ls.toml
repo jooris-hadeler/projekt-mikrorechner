@@ -1,0 +1,7 @@
+[libraries]
+work.files = [
+  "mrProject/memorySim/memPkg.vhd",
+  "mrProject/memorySim/rom.vhd",
+  "mrProject/mr_project/1_Instruction_Fetch/instF.vhd",
+  "mrProject/mr_project/1_Instruction_Fetch/instF_tb.vhd"
+]

@@ -1,0 +1,23 @@
+- kontrollsignale in allen stufen prüfen  
+- miteinander connecten
+- logic ID stufe ausbauen 
+- testen insofern es geht? -> testcases schreiben
+
+inhalt aus sehr altem random todo idk 
+IN PROGRESS
+registerbank [multiplexer, demultiplexer]
+
+TO DO
+
+adder
+alu [big proj]
+testbench
+program counter
+decoder
+steuerwerk
+sign extender
+multiplexer (code vorhanden?)
+
+pipeline stufen definieren
+
+speicher integration
