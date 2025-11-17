@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/trash/**": true
+    },
+    "search.exclude": {
+        "**/trash/**": true
+    },
+    "vhdl.linting.exclude": [
+        "**/trash/**"
+    ]
+}

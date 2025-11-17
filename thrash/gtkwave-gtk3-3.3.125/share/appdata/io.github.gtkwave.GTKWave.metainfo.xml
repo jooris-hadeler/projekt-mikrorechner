@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2025 Tony Bybell <bybell@rocketmail.com> -->
+<component type="desktop">
+  <id>io.github.gtkwave.GTKWave</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  <name>GTKWave</name>
+  <developer_name>Tony Bybell</developer_name>
+  <update_contact>bybell@rocketmail.com</update_contact>
+  <summary>Electronic waveform viewer for viewing simulation results</summary>
+  <description>
+    <p>
+      GTKWave is a fully featured GTK+ based waveform viewer which reads FST and
+      GHW files as well as standard Verilog VCD/EVCD files and allows their viewing.
+    </p>
+    <p>
+      The viewer supports both post-mortem viewing of VCD files and interactive viewing of VCD data.
+      Tcl scripting and callback capability allow for remote control by other applications.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.gtkwave.GTKWave.desktop</launchable>
+
+  <url type="homepage">http://gtkwave.sourceforge.net/</url>
+  <url type="bugtracker">https://github.com/gtkwave/gtkwave/issues</url>
+  <url type="help">https://github.com/gtkwave/gtkwave</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>http://gtkwave.sourceforge.net/gtkwave-appdata.png</image>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.0" />
+
+  <releases>
+    <release version="3.3.125" date="2025-06-22">
+      <description>
+        <p>
+	Changes in 3.3.125:
+        </p>
+	<ul>
+            <li>Added json2stems to distribution to support newer versions of Verilator.</li>
+            <li>VCD parser fix for colon in VCD variable name (Jasper).</li>
+            <li>Parameter size 0 fix for Vivado: conditionally backs out very old fix (for MTI) that converts 0 size signals to reals.</li>
+            <li>Update vcd2fst so it handles MTI 0 size conversion.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.124" date="2025-05-07">
+      <description>
+        <p>
+        Changes in 3.3.124:
+        </p>
+        <ul>
+            <li>Ensure type name in $var for VCD saver is >0 length (GHW).</li>
+            <li>Preserve bitblasted vector ordering with VCD saver.</li>
+            <li>Use full type names in VCD saver instead of abbreviations.</li>
+            <li>Dump all bits for a bitblasted vector in VCD saver in order to ensure stray bit extractions do not cause a failure to reconstruct vectors in proper order in the extracted file.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.123" date="2025-05-01">
+      <description>
+        <p>
+        Changes in 3.3.123:
+        </p>
+        <ul>
+            <li>Fix broken autocoalesce of bitblasted vectors that fix for #428 in 3.3.122 introduced.</li>
+            <li>Fix improper autocoalesce of adjacent duplicate	symbols.</li>
+            <li>Preserve dimension on integer array element when expanded.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.122" date="2025-04-21">
+      <description>
+        <p>
+        Changes in 3.3.122:
+        </p>
+        <ul>
+            <li>Buffer warning fix in fstVcdIDForFwrite.</li>
+            <li>Warning fixes in vzt_read.c and fstapi.c.</li>
+            <li>Prototype fixes for port to gcc15.</li>
+            <li>Fixes for tcl9 compatibility.</li>
+            <li>Added fixes for --saveonexit command line option.</li>
+            <li>Fix for convert_real for TR_REAL traces.</li>
+            <li>Fix for popen_san() in vcd2fst using fsdb binaries.</li>
+            <li>Added fstWriterGetFlushContextPending() to fstapi.c/.h.</li>
+            <li>Reenable wayland code for primary and baseline markers in wavewindow.c.</li>
+            <li>Unnamed scope fix for fstReader.</li>
+            <li>Opaque pointer warning fix for fstapi.c.</li>
+            <li>Remove broken pseudo-2D array support in fst.c.</li>
+            <li>Fix in fst.c for signals whose MSB/LSB/len mismatch.</li>
+            <li>Libfst #15: fstReaderOpen should not fail on empty FST file.</li>
+            <li>Fix crash introduced in 3.3.120 with legacy VCD loader caused by "Fix case of missing newline at EOF for VCD loaders."</li>
+            <li>#423: fstminer doesn't handle string transitions correctly.</li>
+            <li>Fix in fst.c for duplicate string values.</li>
+            <li>Remove duplicate string values from adjacent value changes.</li>
+            <li>Libghw add from upstream for ghdl_rtik_type_i64.</li>
+            <li>#428: Inconsistent handling of invalid vector bounds in VCD and FST loaders.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.121" date="2024-08-09">
+      <description>
+        <p>
+        Changes in 3.3.121:
+        </p>
+        <ul>
+            <li>Integrate gtkwave/pull/376 and gtkwave/pull/377 updates to the FST loader for windows and warnings fixes.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.120" date="2024-06-14">
+      <description>
+        <p>
+        Changes in 3.3.120:
+        </p>
+        <ul>
+            <li>Add launchable tag in io.github.gtkwave.GTKWave.metainfo.xml.</li>
+            <li>Fix memory leak on name in build_hierarchy_array().</li>
+            <li>Fix memory leak in ptranslate/ttranslate.</li>
+            <li>Fix case of missing newline at EOF for VCD loaders.</li>
+            <li>Add escape handling state machine for vars in FST loader.</li>
+            <li>Remove escape check on coalesce in FST loader.</li>
+            <li>CreateFileMapping() warning fix for win32 compiles.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.119" date="2024-03-24">
+      <description>
+        <p>
+        Changes in 3.3.119:
+        </p>
+        <ul>
+            <li>Remove FST_DO_MISALIGNED_OPS.</li>
+            <li>Update lz4 to current version from github.</li>
+            <li>Change LZ4_compress to LZ4_compress_default.</li>
+            <li>Update libghw.c/.h to latest upstream version.</li>
+            <li>Fix for -Wsign-compare in fstapi.c.</li>
+            <li>Security fixes for GHW.</li>
+            <li>Fix left shift of a negative number warning in fstapi.c.</li>
+            <li>Fix ctrl-A behavior for SST filter entry.</li>
+            <li>Fix for bad shmat return value in main.c.</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.118" date="2023-10-20">
+      <description>
+        <p>
+        Changes in 3.3.118:
+        </p>
+        <ul>
+            <li>Update xml2stems to handle newer "loc" vs "fl" xml tags</li>
+            <li>Change preg_regex_c_1 decl to use regex_t* as datatype</li>
+            <li>Move gtkwave.appdata.xml to io.github.gtkwave.GTKWave.metainfo.xml</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.117" date="2023-08-08">
+      <description>
+        <p>
+        Changes in 3.3.117:
+        </p>
+        <ul>
+            <li>Fix stems reader processing code broken in 3.3.114</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.116" date="2023-06-25">
+      <description>
+        <p>
+        Changes in 3.3.116:
+        </p>
+        <ul>
+            <li>Fix manpage/odt for vcd2fst command switch documentation for zlibpack</li>
+            <li>Add GDK_WINDOWING_WAYLAND check for gdkwayland.h header usage</li>
+            <li>Changed sprintf to snprintf in fstapi.c</li>
+            <li>Fix init crash on show_base_symbols enabled</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.115" date="2023-03-28">
+      <description>
+        <p>
+        Changes in 3.3.115:
+        </p>
+        <ul>
+            <li>Fix VZT reader with -fstrict-aliasing</li>
+            <li>Fix use_multi_state condition in vzt_write.c</li>
+            <li>Fix for UNDEF vs strings at start of a vzt file</li>
+            <li>Fix sleep() time scaling redefine for mingw</li>
+            <li>Use MapViewOfFileEx for mmap on Windows (fstapi)</li>
+            <li>Define FST_DO_MISALIGNED_OPS on AArch64 (fstapi)</li>
+            <li>Fixed attrbegin short length problem</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.114" date="2022-11-23">
+      <description>
+        <p>
+        Changes in 3.3.114:
+        </p>
+        <ul>
+            <li>Buffer overflow fixes in FST reader</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.113" date="2022-10-04">
+      <description>
+        <p>
+        Changes in 3.3.113:
+        </p>
+        <ul>
+            <li>High CPU utilization when nothing is happening</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.112" date="2022-10-04">
+      <description>
+        <p>
+        Changes in 3.3.112:
+        </p>
+        <ul>
+            <li>Bugfix-only release, no feature adds</li>
+            <li>VCD reader fixes for unnamed Icarus begin blocks</li>
+            <li>String data type crash fix in fst.c</li>
+        </ul>
+      </description>
+    </release>
+
+    <release version="3.3.111" date="2021-09-01">
+      <description>
+        <p>
+        Changes in 3.3.111:
+        </p>
+        <ul>
+	    <li>Rendering fix for filled rectangles and line caps in Cairo</li>
+	    <li>Fix in fstapi for read start limit time</li>
+	    <li>Use GtkSearchEntry in SST</li>
+	    <li>Convert entrybox to use dialog box</li>
+	    <li>Entrybox: use default response instead of signal handler</li>
+	    <li>Updated show-change widget</li>
+	    <li>Fix xml2stems when begin blocks are in functions</li>
+	    <li>Skip over decimal point in timescale in viewer</li>
+        </ul>
+      </description>
+    </release>
+   </releases>
+</component>
