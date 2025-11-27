@@ -19,6 +19,7 @@ entity ID is
         reg_write_EX :              out std_logic -- '0' kein schreibvorgang, '1' schreiben in registerbank
     );
 end entity ID;
+
 architecture behaviour of ID
 
     is component registerbank is
@@ -45,9 +46,9 @@ architecture behaviour of ID
             dIn => signed(write_data),
             dOutA => dOutA_s, -- mapping von dem signal der registerbank zu dem signal von ID
             dOutB => dOutB_s, -- mapping von dem signal der registerbank zu dem signal von ID
-            selA => sel_alu_val, -- die schnittstelle für das erste quellregister(rs) selA wird mit dem signal für die alu verbunden 
-            selB => sel_reg_val, -- die schnittstelle für das zweite quellregister(rt) selB wird mit dem signal für die alu verbunden
-            selD => write_reg,
+            selA => unsigned(sel_alu_val), -- die schnittstelle für das erste quellregister(rs) selA wird mit dem signal für die alu verbunden 
+            selB => unsigned(sel_reg_val), -- die schnittstelle für das zweite quellregister(rt) selB wird mit dem signal für die alu verbunden
+            selD => unsigned(write_reg), -- die schnittstelle der registerbank selD wird mit dem input port write_reg der ID architektur verbunden
             wE => reg_wE );
         
         alu_val <= std_logic_vector(dOutA_s); -- das signal des Outputs der registerbank wird dem port alu_val zugewiesen
@@ -75,47 +76,48 @@ architecture behaviour of ID
                 funct_v := instruction(5 downto 0); -- zuweisung von funct also 5-0 bit der instruction
 
                 case opcode_v is -- je nach opcode type der instruction bestimmen
-                when opc_r =>
-                    reg_dest <= '1'; -- zielregister ist rd
-                    reg_write_EX <= '1'; -- schreiben in registerbank
-                    case funct_v is 
-                        when funct_add => alu_op <= alu_add;
-                        when funct_sub => alu_op <= alu_sub;
-                        when funct_and => alu_op <= alu_and;
-                        when funct_or => alu_op <= alu_or;
-                        when funct_xor => alu_op <= alu_xor;
-                        when funct_shl => alu_op <= alu_lsl;
-                        when funct_sal => alu_op <= alu_lsl;
-                        when funct_shr => alu_op <= alu_lsr;
-                        when funct_sar => alu_op <= alu_asr;
-                        when funct_not => alu_op <= alu_not;
-                        when funct_lts => alu_op <= alu_cmplt;
-                        when funct_gts => alu_op <= alu_cmpgt;
-                        when funct_ltu => alu_op <= alu_cmplt_u;
-                        when funct_gtu => alu_op <= alu_cmpgt_u;
-                        when funct_eq => alu_op <= alu_cmpe;
-                        when funct_ne => alu_op <= alu_cmpne;
-                    end case;
+                    when opc_r =>
+                        reg_dest <= '1'; -- zielregister ist rd
+                        reg_write_EX <= '1'; -- schreiben in registerbank
+                        case funct_v is 
+                            when funct_add => alu_op <= alu_add;
+                            when funct_sub => alu_op <= alu_sub;
+                            when funct_and => alu_op <= alu_and;
+                            when funct_or => alu_op <= alu_or;
+                            when funct_xor => alu_op <= alu_xor;
+                            when funct_shl => alu_op <= alu_lsl;
+                            when funct_sal => alu_op <= alu_lsl;
+                            when funct_shr => alu_op <= alu_lsr;
+                            when funct_sar => alu_op <= alu_asr;
+                            when funct_not => alu_op <= alu_not;
+                            when funct_lts => alu_op <= alu_cmplt;
+                            when funct_gts => alu_op <= alu_cmpgt;
+                            when funct_ltu => alu_op <= alu_cmplt_u;
+                            when funct_gtu => alu_op <= alu_cmpgt_u;
+                            when funct_eq => alu_op <= alu_cmpe;
+                            when funct_ne => alu_op <= alu_cmpne;
+                            when others => null; 
+                        end case;
 
-                    rs <= instruction(25 downto 21);
-                    rt <= instruction(20 downto 16);
-                    rd <= instruction(15 downto 11);
+                        rs <= instruction(25 downto 21);
+                        rt <= instruction(20 downto 16);
+                        rd <= instruction(15 downto 11);
 
-                when opc_shi => alu_op <= alu_add;
-                when opc_slo => alu_op <= alu_add;
-                when opc_load =>
-                alu_src <= '1'; -- für load adrr = base + immediate
-                mem_to_reg_EX <= '1'; -- zielregister wert = daten aus dem speicher
-                reg_write_EX <= '1'; -- schreiben in registerbank
-                alu_op <= alu_add;
+                    when opc_shi => alu_op <= alu_add;
+                    when opc_slo => alu_op <= alu_add;
+                    when opc_load =>
+                        alu_src <= '1'; -- für load adrr = base + immediate
+                        mem_to_reg_EX <= '1'; -- zielregister wert = daten aus dem speicher
+                        reg_write_EX <= '1'; -- schreiben in registerbank
+                        alu_op <= alu_add;
 
-                when opc_store => alu_op <= alu_add;
-                alu_src <= '1'; -- für store adrr = base + immediate
-
-                when opc_br => alu_op <= alu_add;
-                when opc_jr => alu_op <= alu_add;
-                when opc_jmp => alu_op <= alu_add;
-                when opc_noop => alu_op <= alu_add;
+                    when opc_store => alu_op <= alu_add;
+                        alu_src <= '1'; -- für store adrr = base + immediate
+                    when opc_br => alu_op <= alu_add;
+                    when opc_jr => alu_op <= alu_add;
+                    when opc_jmp => alu_op <= alu_add;
+                    when opc_noop => alu_op <= alu_add;
+                    when others => null;
                 end case;
                 pc_out  <= pc_in;
 

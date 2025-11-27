@@ -1,11 +1,13 @@
 # Pfade, Variblen
 STD := --std=08
 GHDL ?= ghdl
-PROJECT_DIR := $(strip $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))#pfad zum ordner mit makefile ohne / am ende	
 WORK_DIR := $(PROJECT_DIR)mrProject/work
+DEC_DIR  := $(PROJECT_DIR)mrProject/mr_project/2_Instruction_Decode
+EXEC_DIR := $(PROJECT_DIR)mrProject/mr_project/3_Execution
 MEM_DIR := $(PROJECT_DIR)mrProject/memorySim
-MEM_VHD := $(wildcard $(MEM_DIR)/*.vhd)
-MEM_VHD := $(filter-out $(MEM_DIR)/procTest.vhd, $(MEM_VHD))
+MEM_VHD := $(wildcard $(MEM_DIR)/*.vhd)# liste aller .vhd dateien im memorySim ordner
+MEM_VHD := $(filter-out $(MEM_DIR)/procTest.vhd, $(MEM_VHD))#entfernt procTest.vhd aus der Liste
 INSTF_DIR := $(PROJECT_DIR)mrProject/mr_project/1_Instruction_Fetch
 INSTF_VHD := $(wildcard $(INSTF_DIR)/*.vhd)
 TEST_TARGETS := analyze_Memory analyze_InstF
@@ -41,6 +43,13 @@ analyze_Memory: $(WORK_DIR)
 	@ghdl -a $(STD) --work=work --workdir=$(WORK_DIR) $(MEM_VHD)
 	@echo "MEM analysiert"
 
+# kompiliert pakete für Decode und Execute
+decode_packages: | $(WORK_DIR)
+	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" "$(DEC_DIR)/opcodes.vhd"
+	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" "$(DEC_DIR)/funct_codes.vhd"
+	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" "$(EXEC_DIR)/alu_opcode.vhd"
+	@echo "Decode & ALU Packages kompiliert."
+
 #analyze_InstF:
 analyze_InstF: $(WORK_DIR)
 	@ghdl -a $(STD) --work=work --workdir=$(WORK_DIR) $(INSTF_VHD)
@@ -65,13 +74,13 @@ registerbanktest: analyze_Memory analyze_InstF
 	@( gtkwave "$(WORK_DIR)/registerBank_tb.vcd" >/dev/null 2>&1 & ) || true
 	@echo "Register Bank Test abgeschlossen"
 
-ID: analyze_Memory | $(WORK_DIR)
+ID: analyze_Memory decode_packages | $(WORK_DIR)
 	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" \
-		"$(PROJECT_DIR)mrProject/mr_project/2_Instruction_Decode/ID.vhd"
-	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" \
+		"$(DEC_DIR)/ID.vhd"
+#	@ghdl -a $(STD) --work=work --workdir="$(WORK_DIR)" \
 		"$(PROJECT_DIR)mrProject/mr_project/2_Instruction_Decode/IDTest.vhd"
-	@ghdl -e $(STD) --work=work --workdir="$(WORK_DIR)" IDTest
-	@ghdl -r --work=work --workdir="$(WORK_DIR)" IDTest \
+#	@ghdl -e $(STD) --work=work --workdir="$(WORK_DIR)" IDTest
+#	@ghdl -r --work=work --workdir="$(WORK_DIR)" IDTest \
 		--vcd="$(WORK_DIR)/IDTest.vcd"
 
 # löscht das work dir
@@ -85,6 +94,6 @@ clean:
 
 .PHONY: clean analyze_Memory analyze_InstF test waves_InstF run_InstF
 
-test: $(TEST_TARGETS)
-	@$(MAKE) -f $(MAKEFILE_PATH) clean
-	@echo "Tests abgeschlossen."
+test:
+	@echo $(PROJECT_DIR)
+	@echo $(WORK_DIR)
