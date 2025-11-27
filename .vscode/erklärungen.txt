@@ -1,0 +1,4 @@
+std_logic_vector(4 downto 0); 
+    - vector aus 5 bits 
+    - 4 downto 0 bedeutet das links (index 4) das höchstellige bit steht
+    - kann nicht nur '0' sondern auch 'U' (uninitialisiert) oder 'Z' (hochohmig) annehnmen   

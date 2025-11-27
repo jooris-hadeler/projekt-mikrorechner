@@ -13,48 +13,72 @@ entity ID is
         write_reg :                      in std_logic_vector(4 downto 0);
         pc_out, alu_val, reg_val, imm :  out std_logic_vector(31 downto 0);
         alu_op, rs, rd, rt :                 out std_logic_vector(4 downto 0);
-        alu_src, reg_dest, mem_to_reg_EX, reg_write_EX :              out std_logic -- weitere kontrollsignale hinzuf�gen
+        alu_src:                          out std_logic; -- zweiter operand = '0' aus register, '1' immediate wert
+        reg_dest:                        out std_logic; -- zielregister = '0' rt, '1' rd
+        mem_to_reg_EX:                out std_logic; -- zielregister wert = '0' alu ergebnis, '1' daten aus dem speicher (für load)
+        reg_write_EX :              out std_logic -- '0' kein schreibvorgang, '1' schreiben in registerbank
     );
 end entity ID;
 architecture behaviour of ID
+
     is component registerbank is
     port(
         clk :   in std_logic;
         dIn :   in signed(31 downto 0); --input
         dOutA : out signed(31 downto 0); --outputA
         dOutB : out signed(31 downto 0); --outputB
-        selA :  in std_logic_vector(5 downto 1); --Registernr f�r dOutA
-        selB :  in std_logic_vector(5 downto 1); --Registernr f�r dOutB
-        selD :  in std_logic_vector(5 downto 1); --Registernr f�r dIn
+        selA :  in unsigned(4 downto 0); --Registernr f�r dOutA
+        selB :  in unsigned(4 downto 0); --Registernr f�r dOutB
+        selD :  in unsigned(4 downto 0); --Registernr f�r dIn
         wE :    in std_logic
     );
     end component;
 
-    signal sel_alu_val, sel_reg_val : std_logic_vector(4 downto 0);
+    signal sel_alu_val : std_logic_vector(4 downto 0); -- signal für die auswahl des ersten quellregisters (rs) für die alu
+    signal sel_reg_val : std_logic_vector(4 downto 0); -- signal für die auswahl des zweiten quellregisters (rt) für die alu
     signal opcode, funct : STD_LOGIC_VECTOR(5 downto 0);
-
+    signal dOutA_s, dOutB_s : signed(31 downto 0); -- signale für die ausgänge der registerbank, die als operanden für die alu dienen
+    
     begin
         registerbankI: registerbank	port map (
             clk => clk,
             dIn => signed(write_data),
-            std_logic_vector(dOutA) => alu_val,
-            std_logic_vector(dOutB) => reg_val,
-            selA => sel_alu_val,
-            selB => sel_reg_val,
+            dOutA => dOutA_s, -- mapping von dem signal der registerbank zu dem signal von ID
+            dOutB => dOutB_s, -- mapping von dem signal der registerbank zu dem signal von ID
+            selA => sel_alu_val, -- die schnittstelle für das erste quellregister(rs) selA wird mit dem signal für die alu verbunden 
+            selB => sel_reg_val, -- die schnittstelle für das zweite quellregister(rt) selB wird mit dem signal für die alu verbunden
             selD => write_reg,
             wE => reg_wE );
-            
-        id_seg_process : process (clk) is
-            begin
+        
+        alu_val <= std_logic_vector(dOutA_s); -- das signal des Outputs der registerbank wird dem port alu_val zugewiesen
+        reg_val <= std_logic_vector(dOutB_s); -- das signal des Outputs der registerbank wird dem port reg_val zugewiesen
 
-            sel_alu_val <= instruction(27 downto 23);
-            sel_reg_val <= instruction(22 downto 18);
+        id_seg_process : process (clk) is
+            
+            -- hier braucht man variable für opcode/funct, da bei <= diese erst im nächten takt gelten
+            variable opcode_v : std_logic_vector(5 downto 0); 
+            variable funct_v : std_logic_vector(5 downto 0);
+        
+        begin
             if rising_edge(clk) then
-                opcode <= instruction(31 downto 26);
-                case opcode is
+
+                --setzen der out-Schnittstelle für die ALU
+                -- Defaults:
+                alu_src <= '0'; -- default: 2. operand aus register
+                reg_dest <= '0'; -- default: zielregister ist rt
+                mem_to_reg_EX <= '0'; -- default: zielregister wert ist alu ergebnis
+                reg_write_EX <= '0'; -- default: kein schreiben
+
+                sel_alu_val <= instruction(25 downto 21); -- dem signal für das erste quellregister(rs) für den ersten opranden der alu wird der entsprechende teil der instruction zugewiesen
+                sel_reg_val <= instruction(20 downto 16); -- dem signal für das zweite quellregister(rt) für den zweiten opranden der alu wird der entsprechende teil der instruction zugewiesen
+                opcode_v := instruction(31 downto 26); -- zuweisung von opcode also 31-26 bit der instruction
+                funct_v := instruction(5 downto 0); -- zuweisung von funct also 5-0 bit der instruction
+
+                case opcode_v is -- je nach opcode type der instruction bestimmen
                 when opc_r =>
-                    funct <= instruction(5 downto 0);
-                    case funct is
+                    reg_dest <= '1'; -- zielregister ist rd
+                    reg_write_EX <= '1'; -- schreiben in registerbank
+                    case funct_v is 
                         when funct_add => alu_op <= alu_add;
                         when funct_sub => alu_op <= alu_sub;
                         when funct_and => alu_op <= alu_and;
@@ -72,13 +96,22 @@ architecture behaviour of ID
                         when funct_eq => alu_op <= alu_cmpe;
                         when funct_ne => alu_op <= alu_cmpne;
                     end case;
+
                     rs <= instruction(25 downto 21);
                     rt <= instruction(20 downto 16);
                     rd <= instruction(15 downto 11);
+
                 when opc_shi => alu_op <= alu_add;
                 when opc_slo => alu_op <= alu_add;
-                when opc_load => alu_op <= alu_add;
+                when opc_load =>
+                alu_src <= '1'; -- für load adrr = base + immediate
+                mem_to_reg_EX <= '1'; -- zielregister wert = daten aus dem speicher
+                reg_write_EX <= '1'; -- schreiben in registerbank
+                alu_op <= alu_add;
+
                 when opc_store => alu_op <= alu_add;
+                alu_src <= '1'; -- für store adrr = base + immediate
+
                 when opc_br => alu_op <= alu_add;
                 when opc_jr => alu_op <= alu_add;
                 when opc_jmp => alu_op <= alu_add;

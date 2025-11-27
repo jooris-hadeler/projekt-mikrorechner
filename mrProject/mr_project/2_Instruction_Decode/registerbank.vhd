@@ -13,9 +13,9 @@ entity registerbank is
         dIn : in signed(31 downto 0); --input
         dOutA : out signed(31 downto 0); --outputA
         dOutB : out signed(31 downto 0); --outputB
-        selA : in unsigned(4 downto 0); --Registernr für dOutA
-        selB : in unsigned(4 downto 0); --Registernr für dOutB
-        selD : in unsigned(4 downto 0); --Registernr für dIn
+        selA : in unsigned(4 downto 0); -- ist die nummer des ersten quellregisters rs (0- 31), das auf den dOutA gelegt werden soll, bzw operand a für die alu ist
+        selB : in unsigned(4 downto 0); -- ist die nummer des zweiten quellregisters rt (0- 31), das auf den dOutB gelegt werden soll, bzw operand b für die alu ist
+        selD : in unsigned(4 downto 0); -- ist die nummer des zielregisters rd (0- 31), in das der wert von dIn geschrieben werden soll
         wE : in std_logic);
 end entity registerbank; 
 
@@ -33,7 +33,7 @@ reg_demult : process (clk) is
 begin 
     if rising_edge(clk) then 
         if wE = '1' then 
-            registers(to_integer(selD)) <= dIn;
+            registers(to_integer(selD)) <= dIn; -- dIn wird in das zielregister rd(über selD) geschrieben
         end if;
     end if;    
 end process reg_demult;
